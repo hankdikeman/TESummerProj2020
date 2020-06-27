@@ -2,6 +2,6 @@
 Transesterification Kinetic Modelling module development by Innovative Engineers, UMN, Biofuels Team
 
 # Contributors:
-Henry Dikeman
-Shrinivas Venkatasubramani
+Henry Dikeman, 
+Shrinivas Venkatasubramani, 
 Patrick Gibbons
