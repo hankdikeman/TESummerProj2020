@@ -1,2 +1,7 @@
 # TESummerProj2020
-This is the transesterification kinetics summer project run by the biofuels team in Innovative Engineers UMN
+Transesterification Kinetic Modelling module development by Innovative Engineers, UMN, Biofuels Team
+
+# Contributors:
+Henry Dikeman, 
+Shrinivas Venkatasubramani, 
+Patrick Gibbons
