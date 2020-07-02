@@ -4,4 +4,4 @@ Transesterification Kinetic Modelling module development by Innovative Engineers
 # Contributors:
 Henry Dikeman, 
 Shrinivas Venkatasubramani, 
-Patrick Gibbons
+Patrick Gibbons-Peterson
