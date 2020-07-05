@@ -26,8 +26,10 @@
 #### RK4 Function ####
 RK4 <- function(k, C0, time, dt, sf) {
   # determine number of steps and concentration dataframe
-  t_steps <- time %/% dt
+  t_steps <- (time %/% dt) + 1
   C <- C0
+  # preallocate space
+  C[2:t_steps,] <- 0
   # integrates using dC derivative function and RK4
   for(i in 2:t_steps) {
     # runs dC function and computes next conc step

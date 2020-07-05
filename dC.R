@@ -41,7 +41,7 @@ dC <- function(k, C, sf) {
   # sap of MG
   r7 <- sf*C[1,8] * k[1,10]*C[1,4]
   #### Calculation of Derivatives ####
-  derivC <- data.frame()
+  derivC <- data.frame(matrix(0,nrow = 1, ncol = 8))
   # dE/dt
   derivC[1,1] <- r1 + r2 + r3 - r4
   # dTG/dt
@@ -58,5 +58,6 @@ dC <- function(k, C, sf) {
   derivC[1,7] <- r4 + r5 + r6 + r7
   # dOH/dt
   derivC[1,8] <- -1*(r4 + r5 + r6 + r7)
+  # return dataframe of derivatives
   return(derivC)
 }
