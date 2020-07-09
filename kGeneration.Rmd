@@ -1,0 +1,51 @@
+---
+title: "Rate Constant (k) Generation"
+author: "Patrick Gibbons"
+date: "7/8/2020"
+output: 
+  html_document: default
+  pdf_document: default 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+source("./k_gen.R")
+source("./k_set.R")
+```
+
+## Introduction
+
+This is an R Markdown document made for the purpose of showing the nely made function *set_k.R* which returns k values for the 10 reaction rate constants relevant in the kinetic model. *set_k.R* uses *get_k.R* as a helper function to generate a k value given temperature, activation energy and Arrhenius pre-factor.
+
+## Generating k values with range of temperatures 
+
+```{r Temps}
+# list of temperatures in kelvin
+temps <- c(270, 290, 330, 360, 400, 450, 500)
+# list of k values
+ksave <- data.frame(matrix(0, nrow = 7, ncol = 10))
+colnames(ksave) <- c("k1","k1r","k2","k2r","k3","k3r","k4","k5","k6","k7")
+
+for(i in 1:length(temps)) {
+  ksave[i,] <- k_set(temps[i])
+  ksave
+}
+ksave
+```
+
+## Plot of k value vs. temperature
+Plot of k5 vs. temps ranging from 270 to 500 K
+
+```{r graphing, echo=FALSE}
+plot(temps, ksave[,8], 
+     main = "k5 vs. temp",
+     xlab = "Temp (K)",
+     ylab = "k5 (cal mol^-1 K^-1)",
+     pch = 19,
+     col = "#cc0000"
+)
+
+```
+
+
