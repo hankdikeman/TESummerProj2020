@@ -43,7 +43,7 @@ The integration may be performed by calling the *RK4.R* function, which itself c
 # total time of 600 minutes
 time <- 1000
 # 0.5 minute time step
-dt <- 0.5
+dt <- 5
 # integrate using initial conditions, scale factor, and time parameters
 ConcVals <- RK4(kvals, initialvals, time, dt, scale_factor)
 # first few lines of concentration matrix
