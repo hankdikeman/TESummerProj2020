@@ -24,6 +24,7 @@ k_set <- function(T) {
   kvals <- data.frame(matrix(0, nrow = 1, ncol = 10))
   colnames(kvals) <- c("k1","k1r","k2","k2r","k3","k3r","k4","k5","k6","k7")
   
+  # Runs through each k value and takes temperature, specific activation energy, and arrhenius pre-factor
   for(i in 1:length(kvals)) {
     k <- k_gen(T, Arrhvals[i, 1], Arrhvals[i, 2])
     kvals[1, i] <- k
