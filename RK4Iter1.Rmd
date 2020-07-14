@@ -28,7 +28,7 @@ kvals <- data.frame(matrix(c(5.95,2.98,9.399,7.311,15.18,0.698,0.0133,0.3456,0.7
 colnames(kvals) <- c("k1","k1r","k2","k2r","k3","k3r","k4","k5","k6","k7")
 kvals
 # initial species concentration values
-initialvals <- data.frame(matrix(c(0,1,0,0,5,0,0,0.12), nrow = 1, ncol = 8))
+initialvals <- data.frame(matrix(c(0,1,0,0,6,0,0,0.01), nrow = 1, ncol = 8))
 colnames(initialvals) <- c("Ester","TG","DG","MG","ROH","G","S","OH")
 initialvals
 # scale factor used to nondimensionalize all concentrations
@@ -43,7 +43,7 @@ The integration may be performed by calling the *RK4.R* function, which itself c
 # total time of 600 minutes
 time <- 1000
 # 0.5 minute time step
-dt <- 5
+dt <- 2
 # integrate using initial conditions, scale factor, and time parameters
 ConcVals <- RK4(kvals, initialvals, time, dt, scale_factor)
 # first few lines of concentration matrix
@@ -83,6 +83,6 @@ It is also possible to make a pie chart with the `pie` function:
 
 ```{r pie_chart, echo = FALSE}
 dflen <- nrow(time_series)
-slices <- c(time_series$Ester[dflen], (time_series$TG[dflen]*3+time_series$DG[dflen]*2+time_series$MG[dflen]))
+slices <- c(time_series$Ester[dflen], (time_series$TG[dflen]*3+time_series$DG[dflen]*2+time_series$MG[dflen]+time_series$S[dflen]))
 pie(slices, labels = c("Converted Fatty Acids","Unconverted Fatty Acids"), main = "Conversion Percentage")
 ```
