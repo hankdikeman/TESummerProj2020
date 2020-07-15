@@ -26,7 +26,7 @@ IC_wt <- function(TGwt, Lwt, Mwt) {
   conc <- data.frame(matrix(c(0, a[1,1], 0, 0, b[1,1], 0, 0, c[1,1]), ncol = 8))/total_vol
 
   # Return non-dimensionalized values in a dataframe by dividing by TG conc.
-  Int_vals <- conc/conc[1,1]
+  Int_vals <- conc/conc[1,2]
   colnames(Int_vals) <- c("E", "TG", "DG", "MG", "OH", "G", "S", "M")
   return(Int_vals)
 }
