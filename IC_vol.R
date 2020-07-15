@@ -20,13 +20,13 @@ IC_vol <- function(TGvol, Lvol, Mvol) {
   c <- IC_vol_help(pM, MMM, Mvol)
   
   # Obtain total volume by summing second index of a-c
-  total_vol <- (TGvol + Lvol + Mvol)/1000
+  total_vol <- (TGvol + Mvol)/1000
   
   # Concentrations of each species in a data frame [TG, L, MeOH]
-  conc <- data.frame(matrix(c(a, b, c), ncol = 3))/total_vol
+  conc <- data.frame(matrix(c(0, a, 0, 0, b, 0, 0, c), ncol = 8))/total_vol
   
   # Return non-dimensionalized values in a dataframe by dividing by TG conc.
   Int_vals <- conc/conc[1,1]
-  colnames(Int_vals) <- c("TG","OH", "M")
+  colnames(Int_vals) <- c("E", "TG", "DG", "MG", "OH", "G", "S", "M")
   return(Int_vals)
 }

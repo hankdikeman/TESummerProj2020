@@ -20,13 +20,13 @@ IC_wt <- function(TGwt, Lwt, Mwt) {
   c <- IC_wt_help(pM, MMM, Mwt)
   
   # Obtain total volume by summing second index of a-c
-  total_vol <- a[1,2] + b[1,2] + c[1,2]
+  total_vol <- a[1,2] + c[1,2]
   
   # Concentrations of each species in a data frame [TG, L, MeOH]
-  conc <- data.frame(matrix(c(a[1,1], b[1,1], c[1,1]), ncol = 3))/total_vol
+  conc <- data.frame(matrix(c(0, a[1,1], 0, 0, b[1,1], 0, 0, c[1,1]), ncol = 8))/total_vol
 
   # Return non-dimensionalized values in a dataframe by dividing by TG conc.
   Int_vals <- conc/conc[1,1]
-  colnames(Int_vals) <- c("TG","OH", "M")
+  colnames(Int_vals) <- c("E", "TG", "DG", "MG", "OH", "G", "S", "M")
   return(Int_vals)
 }
