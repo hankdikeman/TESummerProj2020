@@ -4,6 +4,7 @@
 ###
 
 library(shiny)
+library(tidyverse)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -39,7 +40,7 @@ ui <- fluidPage(
                         "oh_initial",
                         "Mass/Volume NaOH Added",
                         min = 0,
-                        value = 1
+                        value = 2
                         ),
             # reaction temperature entry
             sliderInput(
@@ -85,7 +86,7 @@ ui <- fluidPage(
            ),
            # table displaying species concentrations and title of table
            p(paste("Display of Species Concentrations At Specific Timepoint")),
-           tableOutput("sim_df")
+           tableOutput("sim_tab")
         )
     )
 )
@@ -97,51 +98,67 @@ server <- function(input, output) {
         loadfunct()
         print("functions loaded")
         
+        IC_df <- reactive({
+            print(paste("IC generated",input$go))
+            isolate({
+                if (input$inputType == "By Mass"){
+                    IC_df <- IC_vol(input$tg_initial, input$oh_initial, input$alc_initial)
+                }
+                else{
+                    IC_df <- IC_wt(input$tg_initial, input$oh_initial, input$alc_initial)
+                }
+                print("used diff function")
+                print(IC_df)
+                IC_df
+            })
+        })
+        
         # run simulation
-        output$sim_df <- renderTable({
-            input$go
+        sim_df <- reactive({
+            print(paste("reaction simulated",input$go))
             isolate({
                 # calculate initial conditions
                 if (input$inputType == "By Mass"){
-                    print(input$alc_initial)
                     IC_df <- IC_vol(input$tg_initial, input$oh_initial, input$alc_initial)
-                    print("by mass")
                 }
                 else{
-                    print(input$oh_initial)
                     IC_df <- IC_wt(input$tg_initial, input$oh_initial, input$alc_initial)
                 }
                 print(IC_df)
                 # calculate k values
-                k_df <- k_set((input$temp_initial+273))
+                k_df <- k_set((input$temp_initial+273))/60
                 
                 # numerical integration
-                sim_conc <- RK4(k_df, IC_df, input$t_length, dt = 2, 1.065)
-                
+                sim_conc <- RK4(k_df, IC_df, input$t_length, dt = 5, 1.065)
+                sim_conc[,(ncol(sim_conc)+1)] <- seq(from = 0, to = input$t_length, length.out = nrow(sim_conc))
+                colnames(sim_conc)[ncol(sim_conc)] <- "timept"
+                # set concentration dataframe as output
                 return(sim_conc)
             })
         })
         
-        # generates plot upon trigger
-        output$histPlot <- renderPlot({
-                # button trigger
-                input$go
-                # isolated histogram creation
-                isolate({
-                x    <- mtcars[, 3]
-                bins <- seq(min(x), max(x), length.out = input$temp_initial + 1)
-                return(hist(x, breaks = bins, col = 'darkgray', border = 'white'))
-                })
+        output$sim_tab <- renderTable({
+            print(paste("table made",input$go))
+            sim_df()
             })
         
-        # generate concentration dataframe upon button trigger
-        # output$conc_df <- renderTable({
-        #     input$go
-        #     isolate({
-        #         return(output$sim_df[1:5,])
-        #     })
-        # })
-        
+        # generates plot upon trigger
+        output$concPlot <- renderPlot({
+                print(paste("plot made",input$go))
+                ggplot(data = sim_df(), aes(timept)) + 
+                    geom_line(aes(y = E/(3), color = "Ester")) + 
+                    geom_line(aes(y = TG, color = "Triglyceride")) + 
+                    geom_line(aes(y = DG, color = "Diglyceride")) + 
+                    geom_line(aes(y = MG, color = "Monoglyceride")) + 
+                    geom_line(aes(y = ROH/4.7, color = "Alcohol")) + 
+                    geom_line(aes(y = OH/.12, color = "Hydroxide")) + 
+                    geom_line(aes(y = G, color = "Glycerol")) + 
+                    geom_line(aes(y = S, color = "Soap")) + 
+                    labs(title = "Species Concentration as a Function of Time", subtitle = "Room temp") +
+                    xlab("time (min)") + 
+                    ylab("Normalized Species Concentration") +
+                    scale_color_discrete(name = "Reaction Species")
+            })
 }
 
 # Run the application 

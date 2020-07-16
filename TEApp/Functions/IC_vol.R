@@ -23,10 +23,10 @@ IC_vol <- function(TGvol, Lvol, Mvol) {
   total_vol <- (TGvol + Mvol)/1000
   
   # Concentrations of each species in a data frame [TG, L, MeOH]
-  conc <- data.frame(matrix(c(0, a, 0, 0, b, 0, 0, c), ncol = 8))/total_vol
+  conc <- data.frame(matrix(c(0, a, 0, 0, c, 0, 0, b), ncol = 8))/total_vol
   
   # Return non-dimensionalized values in a dataframe by dividing by TG conc.
   Int_vals <- conc/conc[1,2]
-  colnames(Int_vals) <- c("E", "TG", "DG", "MG", "OH", "G", "S", "M")
+  colnames(Int_vals) <- c("E", "TG", "DG", "MG", "ROH", "G", "S", "OH")
   return(Int_vals)
 }
