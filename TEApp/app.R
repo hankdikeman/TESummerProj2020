@@ -68,7 +68,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
            # addition of concentration or other plot
-           plotOutput("histPlot"),
+           plotOutput("concPlot"),
            # selection of displayed graph
            selectInput(
                "graph_select",
@@ -85,7 +85,7 @@ ui <- fluidPage(
                width = 800
            ),
            # table displaying species concentrations and title of table
-           p(paste("Display of Species Concentrations At Specific Timepoint")),
+           p(paste("Display of Dimensionless Species Concentrations At Specific Timepoint")),
            tableOutput("sim_tab")
         )
     )
@@ -107,7 +107,6 @@ server <- function(input, output) {
                 else{
                     IC_df <- IC_wt(input$tg_initial, input$oh_initial, input$alc_initial)
                 }
-                print("used diff function")
                 print(IC_df)
                 IC_df
             })
@@ -129,7 +128,8 @@ server <- function(input, output) {
                 k_df <- k_set((input$temp_initial+273))/60
                 
                 # numerical integration
-                sim_conc <- RK4(k_df, IC_df, input$t_length, dt = 5, 1.065)
+                sim_conc <- RK4(k_df, IC_df(), input$t_length, dt = 5, 1.065)
+                # setting timepoint variable, rearranging so it's first
                 sim_conc[,(ncol(sim_conc)+1)] <- seq(from = 0, to = input$t_length, length.out = nrow(sim_conc))
                 colnames(sim_conc)[ncol(sim_conc)] <- "timept"
                 # set concentration dataframe as output
@@ -139,25 +139,29 @@ server <- function(input, output) {
         
         output$sim_tab <- renderTable({
             print(paste("table made",input$go))
-            sim_df()
+            selecteddf <- filter(sim_df(), timept >= input$timept_select)
+            return(selecteddf[1,])
             })
         
         # generates plot upon trigger
         output$concPlot <- renderPlot({
                 print(paste("plot made",input$go))
-                ggplot(data = sim_df(), aes(timept)) + 
+            isolate({
+                speciesPlot <- ggplot(data = sim_df(), aes(timept)) + 
                     geom_line(aes(y = E/(3), color = "Ester")) + 
                     geom_line(aes(y = TG, color = "Triglyceride")) + 
                     geom_line(aes(y = DG, color = "Diglyceride")) + 
                     geom_line(aes(y = MG, color = "Monoglyceride")) + 
-                    geom_line(aes(y = ROH/4.7, color = "Alcohol")) + 
-                    geom_line(aes(y = OH/.12, color = "Hydroxide")) + 
+                    geom_line(aes(y = ROH/IC_df()[1,5], color = "Alcohol")) + 
+                    geom_line(aes(y = OH/IC_df()[1,8], color = "Hydroxide")) + 
                     geom_line(aes(y = G, color = "Glycerol")) + 
-                    geom_line(aes(y = S, color = "Soap")) + 
-                    labs(title = "Species Concentration as a Function of Time", subtitle = "Room temp") +
+                    geom_line(aes(y = S, color = "Soap")) +
+                    labs(title = "Species Concentration as a Function of Time", subtitle = paste("Temp = ",input$temp_initial,"ºC")) +
                     xlab("time (min)") + 
                     ylab("Normalized Species Concentration") +
                     scale_color_discrete(name = "Reaction Species")
+            })
+                return(speciesPlot)
             })
 }
 
