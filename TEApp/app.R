@@ -93,7 +93,8 @@ ui <- fluidPage(
            ),
            # table displaying species concentrations and title of table
            p(paste("Display of Dimensionless Species Concentrations At Specific Timepoint")),
-           tableOutput("sim_tab")
+           tableOutput("sim_tab"),
+           plotOutput("yield_pie_plot")
         )
     )
 )
@@ -128,23 +129,34 @@ server <- function(input, output) {
                     to = input$t_length,
                     length.out = nrow(sim_conc)
                 )
-            colnames(sim_conc)[ncol(sim_conc)] <- "timept"
+            colnames(sim_conc)[ncol(sim_conc)] <- "minutes"
             # set concentration dataframe as output
             return(sim_conc)
         })
         
-        output$sim_tab <- renderTable({
-            print(paste("timepoint changed",input$go))
-            selecteddf <- filter(sim_df(), timept >= input$timept_select)
-            return(selecteddf[1,])
-            })
+        observeEvent(c(input$go, input$timept_select), {
+            # update concentration table at timepoint
+            print(paste("timepoint changed", input$go))
+            tp_df <- filter(sim_df(), minutes >= input$timept_select)
+            output$sim_tab <- renderTable(tp_df[1, ])
+            
+            # generate pie plot at timepoint
+            slices <- c(tp_df$E[1], (tp_df$TG[1] * 3 + tp_df$DG[1] * 2 + tp_df$MG[1] + tp_df$S[1]))
+            perc_conv <- c(format(round(slices[1]/3*100,1), nsmall = 1), format(round(slices[2]/3*100,1), nsmall = 1))
+            output$yield_pie_plot <-
+                renderPlot(pie(
+                    slices,
+                    labels = c(paste("Converted Fatty Acids",perc_conv[1],"%"), paste("Unconverted Fatty Acids",perc_conv[2],"%")),
+                    main = paste("Conversion Percentage at",input$timept_select,"minutes")
+                ))
+        })
         
         # generates plot upon trigger
         observeEvent(input$go, ({
             output$concPlot <- renderPlot({
                 print(paste("plot made", input$go))
                 speciesPlot <-
-                    ggplot(data = sim_df(), aes(timept)) +
+                    ggplot(data = sim_df(), aes(minutes)) +
                     geom_line(aes(y = E / (3), color = "Ester")) +
                     geom_line(aes(y = TG, color = "Triglyceride")) +
                     geom_line(aes(y = DG, color = "Diglyceride")) +
