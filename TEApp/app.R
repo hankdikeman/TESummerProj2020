@@ -3,8 +3,15 @@
 #  developed by the biofuels team in Innovative Engineers UMN
 ###
 
+# packages loaded
 library(shiny)
 library(tidyverse)
+print("packages loaded")
+
+# loads in all relevant helper functions
+source("./Functions/loadFunct.R")
+loadfunct()
+print("functions loaded")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -93,76 +100,66 @@ ui <- fluidPage(
 
 # load functions and define server logic
 server <- function(input, output) {
-        # loads in all relevant helper functions
-        source("./Functions/loadFunct.R")
-        loadfunct()
-        print("functions loaded")
-        
-        IC_df <- reactive({
-            print(paste("IC generated",input$go))
-            isolate({
-                if (input$inputType == "By Mass"){
-                    IC_df <- IC_vol(input$tg_initial, input$oh_initial, input$alc_initial)
-                }
-                else{
-                    IC_df <- IC_wt(input$tg_initial, input$oh_initial, input$alc_initial)
-                }
-                print(IC_df)
-                IC_df
-            })
+        # generate initial condition dataframe
+        IC_df <- eventReactive(input$go, {
+            print(paste("IC generated", input$go))
+            if (input$inputType == "By Mass") {
+                IC_df <- IC_vol(input$tg_initial, input$oh_initial, input$alc_initial)
+            }
+            else{
+                IC_df <- IC_wt(input$tg_initial, input$oh_initial, input$alc_initial)
+            }
+            print(IC_df)
+            IC_df
         })
         
         # run simulation
-        sim_df <- reactive({
+        sim_df <- eventReactive(input$go, {
             print(paste("reaction simulated",input$go))
-            isolate({
-                # calculate initial conditions
-                if (input$inputType == "By Mass"){
-                    IC_df <- IC_vol(input$tg_initial, input$oh_initial, input$alc_initial)
-                }
-                else{
-                    IC_df <- IC_wt(input$tg_initial, input$oh_initial, input$alc_initial)
-                }
-                print(IC_df)
-                # calculate k values
-                k_df <- k_set((input$temp_initial+273))/60
-                
-                # numerical integration
-                sim_conc <- RK4(k_df, IC_df(), input$t_length, dt = 5, 1.065)
-                # setting timepoint variable, rearranging so it's first
-                sim_conc[,(ncol(sim_conc)+1)] <- seq(from = 0, to = input$t_length, length.out = nrow(sim_conc))
-                colnames(sim_conc)[ncol(sim_conc)] <- "timept"
-                # set concentration dataframe as output
-                return(sim_conc)
-            })
+            # calculate k values
+            k_df <- k_set((input$temp_initial + 273)) / 60
+            # numerical integration
+            sim_conc <-
+                RK4(k_df, IC_df(), input$t_length, dt = 5, 1.065)
+            # setting timepoint variable, rearranging so it's first
+            sim_conc[, (ncol(sim_conc) + 1)] <-
+                seq(
+                    from = 0,
+                    to = input$t_length,
+                    length.out = nrow(sim_conc)
+                )
+            colnames(sim_conc)[ncol(sim_conc)] <- "timept"
+            # set concentration dataframe as output
+            return(sim_conc)
         })
         
         output$sim_tab <- renderTable({
-            print(paste("table made",input$go))
+            print(paste("timepoint changed",input$go))
             selecteddf <- filter(sim_df(), timept >= input$timept_select)
             return(selecteddf[1,])
             })
         
         # generates plot upon trigger
-        output$concPlot <- renderPlot({
-                print(paste("plot made",input$go))
-            isolate({
-                speciesPlot <- ggplot(data = sim_df(), aes(timept)) + 
-                    geom_line(aes(y = E/(3), color = "Ester")) + 
-                    geom_line(aes(y = TG, color = "Triglyceride")) + 
-                    geom_line(aes(y = DG, color = "Diglyceride")) + 
-                    geom_line(aes(y = MG, color = "Monoglyceride")) + 
-                    geom_line(aes(y = ROH/IC_df()[1,5], color = "Alcohol")) + 
-                    geom_line(aes(y = OH/IC_df()[1,8], color = "Hydroxide")) + 
-                    geom_line(aes(y = G, color = "Glycerol")) + 
+        observeEvent(input$go, ({
+            output$concPlot <- renderPlot({
+                print(paste("plot made", input$go))
+                speciesPlot <-
+                    ggplot(data = sim_df(), aes(timept)) +
+                    geom_line(aes(y = E / (3), color = "Ester")) +
+                    geom_line(aes(y = TG, color = "Triglyceride")) +
+                    geom_line(aes(y = DG, color = "Diglyceride")) +
+                    geom_line(aes(y = MG, color = "Monoglyceride")) +
+                    geom_line(aes(y = ROH / IC_df()[1, 5], color = "Alcohol")) +
+                    geom_line(aes(y = OH / IC_df()[1, 8], color = "Hydroxide")) +
+                    geom_line(aes(y = G, color = "Glycerol")) +
                     geom_line(aes(y = S, color = "Soap")) +
-                    labs(title = "Species Concentration as a Function of Time", subtitle = paste("Temp = ",input$temp_initial,"ºC")) +
-                    xlab("time (min)") + 
+                    labs(title = "Species Concentration as a Function of Time", subtitle = paste("Temp = ", input$temp_initial, "ºC")) +
+                    xlab("time (min)") +
                     ylab("Normalized Species Concentration") +
                     scale_color_discrete(name = "Reaction Species")
-            })
                 return(speciesPlot)
             })
+        }))
 }
 
 # Run the application 
