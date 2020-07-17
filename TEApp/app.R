@@ -15,7 +15,6 @@ print("functions loaded")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-    
     # Webpage Title
     titlePanel("Transesterification Reaction Simulation Module"),
     # Division of layout into sidebar and main section
@@ -63,8 +62,15 @@ ui <- fluidPage(
                 "t_length",
                 "Total Time of Integration (minutes)",
                 min = 0,
-                value = 1000
+                value = 150
             ),
+            numericInput(
+                "step_size",
+                "Time step (smaller = more accurate, larger = faster computation) *[temporary]*",
+                min = 0.0001,
+                value = 5
+            ),
+            # time step of integration
             # "go" button
             actionButton(
                 inputId = "go",
@@ -87,7 +93,7 @@ ui <- fluidPage(
                "timept_select",
                "Select the Timepoint of Displayed Concentrations",
                min = 0,
-               max = 1000,
+               max = 150,
                value = 0,
                width = 800
            ),
@@ -121,7 +127,7 @@ server <- function(input, output) {
             k_df <- k_set((input$temp_initial + 273)) / 60
             # numerical integration
             sim_conc <-
-                RK4(k_df, IC_df(), input$t_length, dt = 5, 1.065)
+                RK4(k_df, IC_df(), input$t_length, input$step_size, 1.065)
             # setting timepoint variable, rearranging so it's first
             sim_conc[, (ncol(sim_conc) + 1)] <-
                 seq(
@@ -141,12 +147,12 @@ server <- function(input, output) {
             output$sim_tab <- renderTable(tp_df[1, ])
             
             # generate pie plot at timepoint
-            slices <- c(tp_df$E[1], (tp_df$TG[1] * 3 + tp_df$DG[1] * 2 + tp_df$MG[1] + tp_df$S[1]))
-            perc_conv <- c(format(round(slices[1]/3*100,1), nsmall = 1), format(round(slices[2]/3*100,1), nsmall = 1))
+            slices <- c(tp_df$E[1], (tp_df$TG[1] * 3 + tp_df$DG[1] * 2 + tp_df$MG[1]), tp_df$S[1])
+            perc_conv <- c(format(round(slices[1]/3*100,1), nsmall = 1), format(round(slices[2]/3*100,1), nsmall = 1),format(round(slices[3]/3*100,1), nsmall = 1))
             output$yield_pie_plot <-
                 renderPlot(pie(
                     slices,
-                    labels = c(paste("Converted Fatty Acids",perc_conv[1],"%"), paste("Unconverted Fatty Acids",perc_conv[2],"%")),
+                    labels = c(paste("Converted Fatty Acids",perc_conv[1],"%"), paste("Unconverted Fatty Acids",perc_conv[2],"%"), paste("Saponified Fatty Acids",perc_conv[3],"%")),
                     main = paste("Conversion Percentage at",input$timept_select,"minutes")
                 ))
         })
@@ -154,6 +160,7 @@ server <- function(input, output) {
         # generates plot upon trigger
         observeEvent(input$go, ({
             output$concPlot <- renderPlot({
+                isolate({
                 print(paste("plot made", input$go))
                 speciesPlot <-
                     ggplot(data = sim_df(), aes(minutes)) +
@@ -170,6 +177,7 @@ server <- function(input, output) {
                     ylab("Normalized Species Concentration") +
                     scale_color_discrete(name = "Reaction Species")
                 return(speciesPlot)
+                })
             })
         }))
 }
