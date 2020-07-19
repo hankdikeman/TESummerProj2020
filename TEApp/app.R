@@ -2,7 +2,7 @@
 #  This is the transesterification app code, which implements the numeric integration strategy
 #  developed by the biofuels team in Innovative Engineers UMN
 ###
-
+#### Set-Up and Loading Packages ####
 # packages loaded
 library(shiny)
 library(tidyverse)
@@ -13,101 +13,128 @@ source("./Functions/loadFunct.R")
 loadfunct()
 print("functions loaded")
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-    # Webpage Title
-    titlePanel("Transesterification Reaction Simulation Module"),
-    # Division of layout into sidebar and main section
-    sidebarLayout(
-        sidebarPanel(
-            # selection of mass or volume input
-            radioButtons(
-                        "inputType",
-                        "Ingredient Entry Type",
-                        choices = c("By Mass","By Volume"),
-                        inline = TRUE
-            ),
-            # triglyceride amount added entry
-            numericInput(
-                        "tg_initial",
-                        "Mass/Volume Triglyceride Added",
-                        min = 0,
-                        value = 1000
-                         ),
-            # alcohol amount added entry
-            numericInput(
-                        "alc_initial",
-                        "Mass/Volume Alcohol Added",
-                        min = 0,
-                        value = 200
+#### UI ####
+ui <- fluidPage(#### Overall Style and Set-up ####
+                # overall using downloaded theme
+                # theme = 'bootstrap.css',
+                # horizontal line contrast set to high
+                tags$head(
+                    tags$style(
+                        HTML("hr {border-top: 1px solid #A9A9A9;}")
+                    )
+                ),
+                # Webpage Title
+                wellPanel(h2(
+                    strong("Transesterification Reaction Simulation Module"),
+                    align = 'center'
+                )),
+                # Division of layout into sidebar and main section
+                sidebarLayout(
+                    #### Sidebar IC Entry Panel ####
+                    sidebarPanel(
+                        # title of sidebar
+                        tags$h3(tags$strong("Initial Conditions Entry"), align = 'center'),
+                        tags$hr(),
+                        # short blurb explanation
+                        tags$p(
+                            "Please select your initial reactant amounts, temperatures, and desired time of simulation below:"
                         ),
-            # sodium hydroxide added entry
-            numericInput(
-                        "oh_initial",
-                        "Mass/Volume NaOH Added",
-                        min = 0,
-                        value = 2
+                        # selection of mass or volume input
+                        radioButtons(
+                            "inputType",
+                            "Ingredient Entry Type",
+                            choices = c("By Mass", "By Volume"),
+                            inline = TRUE
                         ),
-            # reaction temperature entry
-            sliderInput(
-                        "temp_initial",
-                        "Reaction Temperature  (ºC)",
-                        min = 20,
-                        max = 70,
-                        value = 25
-            ),
-            br(),
-            # length of integration
-            numericInput(
-                "t_length",
-                "Total Time of Integration (minutes)",
-                min = 0,
-                value = 150
-            ),
-            numericInput(
-                "step_size",
-                "Time step (smaller = more accurate, larger = faster computation) *[temporary]*",
-                min = 0.0001,
-                value = 5
-            ),
-            # time step of integration
-            # "go" button
-            actionButton(
-                inputId = "go",
-                label = "Generate Reaction Simulation"
-            )
-        ),
+                        # triglyceride amount added entry
+                        numericInput(
+                            "tg_initial",
+                            "Mass/Volume Triglyceride Added",
+                            min = 0,
+                            value = 1000
+                        ),
+                        # alcohol amount added entry
+                        numericInput(
+                            "alc_initial",
+                            "Mass/Volume Alcohol Added",
+                            min = 0,
+                            value = 200
+                        ),
+                        # sodium hydroxide added entry
+                        numericInput(
+                            "oh_initial",
+                            "Mass/Volume NaOH Added",
+                            min = 0,
+                            value = 2
+                        ),
+                        tags$hr(),
+                        # reaction temperature entry
+                        sliderInput(
+                            "temp_initial",
+                            "Reaction Temperature  (ºC)",
+                            min = 20,
+                            max = 70,
+                            value = 25
+                        ),
+                        tags$hr(),
+                        # length of integration
+                        numericInput(
+                            "t_length",
+                            "Total Time of Integration (minutes)",
+                            min = 0,
+                            value = 150
+                        ),
+                        numericInput(
+                            "step_size",
+                            "Time step *[temporary]*",
+                            min = 0.0001,
+                            value = 5
+                        ),
+                        tags$hr(),
+                        # time step of integration
+                        # "go" button
+                        actionButton(inputId = "go",
+                                     label = "Generate Reaction Simulation")
+                    ),
+                    #### Main Results Panel ####
+                    # Show a plot of the generated distribution
+                    mainPanel(
+                        # title of main panel
+                        tags$h3(strong("Simulation Results"), align = 'center'),
+                        # addition of concentration or other plot
+                        wellPanel(plotOutput("concPlot"), style = "color:green;"),
+                        # selection of displayed graph
+                        selectInput(
+                            "graph_select",
+                            "Select the graph you would like to view:",
+                            choices = c("graph1", "graph2")
+                        ),
+                        tags$hr(),
+                        fluidRow(
+                            # selection of timepoint of interest
+                            sliderInput(
+                                "timept_select",
+                                "Select the Timepoint of Displayed Concentrations",
+                                min = 0,
+                                max = 150,
+                                value = 0,
+                                width = 800
+                            ),
+                            # table displaying species concentrations and title of table
+                            p(
+                                paste(
+                                    "Display of Dimensionless Species Concentrations At Specific Timepoint"
+                                )
+                            ),
+                            tableOutput("sim_tab"),
+                            plotOutput("yield_pie_plot")
+                        )
+                    )
+                ))
 
-        # Show a plot of the generated distribution
-        mainPanel(
-           # addition of concentration or other plot
-           plotOutput("concPlot"),
-           # selection of displayed graph
-           selectInput(
-               "graph_select",
-               "Select the graph you would like to view:",
-               choices = c("graph1","graph2")
-           ),
-           # selection of timepoint of interest
-           sliderInput(
-               "timept_select",
-               "Select the Timepoint of Displayed Concentrations",
-               min = 0,
-               max = 150,
-               value = 0,
-               width = 800
-           ),
-           # table displaying species concentrations and title of table
-           p(paste("Display of Dimensionless Species Concentrations At Specific Timepoint")),
-           tableOutput("sim_tab"),
-           plotOutput("yield_pie_plot")
-        )
-    )
-)
-
-# load functions and define server logic
+#### Server Backend ####
 server <- function(input, output) {
-        # generate initial condition dataframe
+        #### Initial Reactants Calculation ####
         IC_df <- eventReactive(input$go, {
             print(paste("IC generated", input$go))
             if (input$inputType == "By Mass") {
@@ -120,7 +147,7 @@ server <- function(input, output) {
             IC_df
         })
         
-        # run simulation
+        #### RK4 Simulation ####
         sim_df <- eventReactive(input$go, {
             print(paste("reaction simulated",input$go))
             # calculate k values
@@ -140,6 +167,7 @@ server <- function(input, output) {
             return(sim_conc)
         })
         
+        #### Determine Displayed Timepoint and Pie Chart ####
         observeEvent(c(input$go, input$timept_select), {
             # update concentration table at timepoint
             print(paste("timepoint changed", input$go))
@@ -156,7 +184,7 @@ server <- function(input, output) {
                     main = paste("Conversion Percentage at",input$timept_select,"minutes")
                 ))
         })
-        
+        #### Generate Concentration Plot ####
         # generates plot upon trigger
         observeEvent(input$go, ({
             output$concPlot <- renderPlot({
