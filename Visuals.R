@@ -21,7 +21,7 @@ for(i in 1:length(temps)) {
 # Display the k values
 kvals
 
-# Plot of k1 v temp
+# Plot of k1 v temp. Though a table seems better.
 ggplot(data = kvals) +
   geom_point(mapping = aes(x = temps, y = k1), color = "red")
 
@@ -51,7 +51,6 @@ ggplot(data = time_series, aes(time)) +
   geom_line(aes(y = Ester/(3*initialvals[1,2]), color = "Ester")) + 
   geom_line(aes(y = G, color = "Glycerol")) + 
   geom_line(aes(y = S, color = "Soap")) + 
-
   labs(title = "Species Concentration as a Function of Time", subtitle = "Room temp") +
   xlab("time (min)") + 
   ylab("Normalized Species Concentration") +
