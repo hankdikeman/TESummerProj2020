@@ -16,7 +16,7 @@
 k_set <- function(T) {
   # Emperical data for activation energy and Arrhenius pre-factor
   Arrhvals <- data.frame(matrix(c(13145, 9932, 19860, 14369, 6421, 9588, 0, 13045, 19760, 6321, 
-                                3.0409*exp(10), 6.4527*exp(7), 4.3770*exp(15), 2.9961*exp(11), 8.3880*exp(5), 8.4223*exp(6), 1.3300*exp(-2), 1.4817*exp(9), 2.9362*exp(14), 2.1695*exp(4)), 
+                                3.0409*10^(10), 6.4527*10^(7), 4.3770*10^(15), 2.9961*10^7(11), 8.3880*10^(5), 8.4223*10^(6), 1.3300*10^(-2), 1.4817*10^(9), 2.9362*10^(14), 2.1695*10^(4)), 
                                 ncol = 2))
   colnames(Arrhvals) <- c("Activation energy", "Arrhenius pre-factor")
   
