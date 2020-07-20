@@ -1,0 +1,85 @@
+---
+title: "Visuals"
+author: "Shrinivas Venkatasubramani"
+date: "7/18/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+source("./k_gen.R")
+source("./k_set.R")
+source("./RK4.R")
+source("./dC.R")
+```
+
+## Introduction
+
+This is an R Markdown document for displaying various *visuals* that go with our data. 
+
+## Table of k values
+
+The first visual is of k values for a range of temp from [20,90]. Data is inputted into temps. Then a data frame kvals is created. Finally a loop is used to enter the values into kvals using the k_set function.
+
+```{r Table1}
+## Generating k values as shown in kGeneration.Rmd
+# list of temperatures in kelvin
+temps <- c(20, 25, 30, 35, 40, 50, 60, 70, 80, 90)
+# list of k values
+kvals <- data.frame(matrix(0, nrow = 10, ncol = 10))
+colnames(kvals) <- c("k1","k1r","k2","k2r","k3","k3r","k4","k5","k6","k7")
+
+for(i in 1:length(temps)) {
+  kvals[i,] <- k_set(temps[i])
+  kvals
+}
+kvals
+```
+
+## Graphs
+Few more useful graphs would be to display the formation of the ester, glycerol, and the saponification (separately) with respects to time and the temp. The initial values, scale_factor, time, dt are all declared. Then the RK4 function is run determine the ConcVals. Timevals are calculated separately and added.
+
+```{r Graph_of_products, echo = FALSE}
+## Using values found in RK4
+initialvals <- data.frame(matrix(c(0,1,0,0,6,0,0,0.01), nrow = 1, ncol = 8))
+colnames(initialvals) <- c("Ester","TG","DG","MG","ROH","G","S","OH")
+initialvals
+# scale factor used to non-dimensionalize all concentrations
+scale_factor <- 1.035
+
+# total time of 600 minutes
+time <- 1000
+# 0.5 minute time step
+dt <- 2
+# integrate using initial conditions, scale factor, and time parameters
+ConcVals <- RK4(kvals, initialvals, time, dt, scale_factor)
+# first few lines of concentration matrix
+head(ConcVals)
+
+timevals <- data.frame(matrix(0, nrow = time/dt+1, ncol = 1))
+for(i in 1:((time/dt)+1)){timevals[i,1] <- (i-1)*dt}
+time_series <- cbind(ConcVals,timevals)
+colnames(time_series) = c(colnames(ConcVals),"time")
+
+## Plot of ester, glycerol, and soap v time
+ggplot(data = time_series, aes(time)) + 
+  geom_line(aes(y = Ester/(3*initialvals[1,2]), color = "Ester")) + 
+  geom_line(aes(y = G, color = "Glycerol")) + 
+  geom_line(aes(y = S, color = "Soap")) + 
+
+  labs(title = "Species Concentration as a Function of Time", subtitle = "Room temp") +
+  xlab("time (min)") + 
+  ylab("Normalized Species Concentration") +
+  scale_color_discrete(name = "Reaction Species")
+```
+
+```{Graph of glycerol}
+
+```
+
+```{Graph of soap}
+
+```

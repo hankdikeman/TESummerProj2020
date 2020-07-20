@@ -1,0 +1,16 @@
+---
+title: "Visuals_2"
+author: "Shrinivas Venkatasubramani"
+date: "7/19/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Similar to visuals; however, data for the temperature and the initial concentrations of the triglyceride, alcohol, and base can be entered manually.
+
+```{graph 1, echo = FALSE}
+
+```
