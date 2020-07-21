@@ -196,13 +196,13 @@ server <- function(input, output) {
                     labels = c(paste("Converted Fatty Acids",perc_conv[1],"%"), paste("Unconverted Fatty Acids",perc_conv[2],"%"), paste("Saponified Fatty Acids",perc_conv[3],"%")),
                     main = paste("Conversion Percentage at",input$timept_select,"minutes")
                 ))
-            # rounds concentration values to friendlier looking form
+            # rounds concentration and time values to friendlier looking form
+            tp_df[1,1] <- as.numeric(format(round(tp_df[1,1],1), nsmall = 3))
             for(colval in 2:ncol(tp_df)){
                     tp_df[1,colval] <- as.numeric(format(round(tp_df[1,colval],3), nsmall = 3))
             }
             colnames(tp_df) <- c("Time (min)", "Ester", "Triglyceride", "Diglyceride", "Monoglyceride", "Alcohol", "Glycerol", "Soap", "Hydroxide")
             # render data table of values
-            print(typeof(tp_df[1,1]))
             output$sim_tab <- renderDataTable(tp_df[1, ])
         })
         #### Generate Concentration Plot ####
