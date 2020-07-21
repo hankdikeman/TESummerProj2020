@@ -27,7 +27,7 @@ The first visual is of k values for a range of temp from [20,90]. Data is inputt
 ```{r Table1}
 ## Generating k values as shown in kGeneration.Rmd
 # list of temperatures in kelvin
-temps <- c(20, 25, 30, 35, 40, 50, 60, 70, 80, 90)
+temps <- c(20, 25, 30, 35, 40, 50, 60, 70, 80, 90)+273
 # list of k values
 kvals <- data.frame(matrix(0, nrow = 10, ncol = 10))
 colnames(kvals) <- c("k1","k1r","k2","k2r","k3","k3r","k4","k5","k6","k7")

@@ -1,0 +1,23 @@
+---
+title: "Function Trial"
+author: "Shrinivas Venkatasubramani"
+date: "7/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+source("./k_gen.R")
+source("./k_set.R")
+source("./RK4.R")
+source("./dC.R")
+source("./gen_Reactions_v_Time.R")
+```
+
+## R Markdown
+Graph of product formation over time.
+
+```{r graphing}
+gen_Prod_Time(373, 1, 6, 0.01)
+```
