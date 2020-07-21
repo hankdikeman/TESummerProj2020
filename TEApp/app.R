@@ -16,12 +16,8 @@ print("functions loaded")
 
 #### UI ####
 ui <- fluidPage(#### Overall Style and Set-up ####
-                # overall using downloaded theme
-                # theme = 'bootstrap.css',
-                # horizontal line contrast set to high
-                tags$head(tags$style(
-                        HTML("hr {border-top: 1px solid #A9A9A9;}")
-                )),
+                # CSS style sheet import
+                includeCSS("www/styles.css"),
                 # Webpage Title
                 wellPanel(h2(
                         strong("Transesterification Reaction Simulation Module"),
@@ -33,6 +29,7 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                         sidebarPanel(
                                 # title of sidebar
                                 tags$h3(tags$strong("Initial Conditions Entry"), align = 'center'),
+                                tags$br(),
                                 tags$hr(),
                                 # short blurb explanation
                                 tags$p(
@@ -46,46 +43,52 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                         inline = TRUE
                                 ),
                                 # triglyceride amount added entry
+                                tags$p("Mass/Volume Triglyceride Added"),
                                 numericInput(
                                         "tg_initial",
-                                        "Mass/Volume Triglyceride Added",
+                                        NULL,
                                         min = 0,
                                         value = 1000
                                 ),
                                 # alcohol amount added entry
+                                tags$p("Mass/Volume Alcohol Added"),
                                 numericInput(
                                         "alc_initial",
-                                        "Mass/Volume Alcohol Added",
+                                        NULL,
                                         min = 0,
                                         value = 200
                                 ),
                                 # sodium hydroxide added entry
+                                tags$p("Mass/Volume NaOH Added"),
                                 numericInput(
                                         "oh_initial",
-                                        "Mass/Volume NaOH Added",
+                                        NULL,
                                         min = 0,
                                         value = 2
                                 ),
                                 tags$hr(),
                                 # reaction temperature entry
+                                tags$p("Reaction Temperature  (ºC)"),
                                 sliderInput(
                                         "temp_initial",
-                                        "Reaction Temperature  (ºC)",
+                                        NULL,
                                         min = 20,
                                         max = 70,
                                         value = 25
                                 ),
                                 tags$hr(),
                                 # length of integration
+                                tags$p("Total Time of Integration (minutes)"),
                                 numericInput(
                                         "t_length",
-                                        "Total Time of Integration (minutes)",
+                                        NULL,
                                         min = 0,
                                         value = 150
                                 ),
+                                tags$p("Time step *[temporary]*"),
                                 numericInput(
                                         "step_size",
-                                        "Time step *[temporary]*",
+                                        NULL,
                                         min = 0.0001,
                                         value = 5
                                 ),
@@ -101,31 +104,36 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                 conditionalPanel(
                                         # only shows results stuff once go button has been clicked
                                         condition = "input.go != 0",
-                                        # title of main panel
-                                        tags$h3(strong("Simulation Results"), align = 'center'),
-                                        # addition of concentration or other plot
-                                        wellPanel(plotOutput("concPlot") %>% withSpinner(color = "#000000")),
+                                        # results wellPanel
+                                        wellPanel(
+                                                # title of main panel
+                                                tags$h3(strong("Simulation Results"), align = 'center'),
+                                                tags$br(),
+                                                # addition of concentration or other plot
+                                                plotOutput("concPlot") %>% withSpinner(color = "#000000")),
                                         # selection of displayed graph
+                                        tags$p("Select the graph you would like to view:"),
                                         selectInput(
                                                 "graph_select",
-                                                "Select the graph you would like to view:",
+                                                NULL,
                                                 choices = c("graph1", "graph2")
                                         ),
                                         tags$hr(),
                                         fluidRow(
                                                 # selection of timepoint of interest
+                                                tags$p("Select the Timepoint of Displayed Concentrations"),
                                                 sliderInput(
                                                         "timept_select",
-                                                        "Select the Timepoint of Displayed Concentrations",
+                                                        NULL,
                                                         min = 0,
                                                         max = 150,
                                                         value = 0,
                                                         width = 800
                                                 ),
                                                 # table displaying species concentrations and title of table
-                                                p(
+                                                tags$p(
                                                         paste(
-                                                                "Display of Dimensionless Species Concentrations At Specific Timepoint"
+                                                                "Display of Dimensionless Species Concentrations At Selected Timepoint"
                                                         )
                                                 ),
                                                 tableOutput("sim_tab"),

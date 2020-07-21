@@ -1,0 +1,16 @@
+/*!
+ * This is a collection of CSS styles that will be imported in the TEApp and serve as a header function
+ * File created: 7/20/20
+ */
+ 
+body {
+  background-color: #dae3e5;
+}
+
+well{
+  background: #000000;
+}
+
+hr {
+  border-top: 1px solid #A9A9A9;
+}
