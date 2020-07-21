@@ -7,6 +7,7 @@
 library(shiny)
 library(tidyverse)
 library(shinycssloaders)
+library(DT)
 print("packages loaded")
 
 # loads in all relevant helper functions
@@ -133,10 +134,12 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                 # table displaying species concentrations and title of table
                                                 tags$p(
                                                         paste(
-                                                                "Display of Dimensionless Species Concentrations At Selected Timepoint"
-                                                        )
+                                                                "Dimensionless Species Concentrations At Selected Timepoint"
+                                                        ),
+                                                        align = 'center'
                                                 ),
-                                                tableOutput("sim_tab"),
+                                                column(12,
+                                                dataTableOutput("sim_tab")),
                                                 plotOutput("yield_pie_plot")
                                         )
                                 )
@@ -180,11 +183,10 @@ server <- function(input, output) {
         
         #### Determine Displayed Timepoint and Pie Chart ####
         observeEvent(c(input$go, input$timept_select), {
-            # update concentration table at timepoint
+            # find concentrations at the selected timepoint value
             print(paste("timepoint changed", input$go))
-            tp_df <- filter(sim_df(), minutes >= input$timept_select)
-            output$sim_tab <- renderTable(tp_df[1, ])
-            
+            tp_df <- filter(sim_df(), minutes >= input$timept_select) %>%
+                    select(minutes, E:OH)
             # generate pie plot at timepoint
             slices <- c(tp_df$E[1], (tp_df$TG[1] * 3 + tp_df$DG[1] * 2 + tp_df$MG[1]), tp_df$S[1])
             perc_conv <- c(format(round(slices[1]/3*100,1), nsmall = 1), format(round(slices[2]/3*100,1), nsmall = 1),format(round(slices[3]/3*100,1), nsmall = 1))
@@ -194,6 +196,14 @@ server <- function(input, output) {
                     labels = c(paste("Converted Fatty Acids",perc_conv[1],"%"), paste("Unconverted Fatty Acids",perc_conv[2],"%"), paste("Saponified Fatty Acids",perc_conv[3],"%")),
                     main = paste("Conversion Percentage at",input$timept_select,"minutes")
                 ))
+            # rounds concentration values to friendlier looking form
+            for(colval in 2:ncol(tp_df)){
+                    tp_df[1,colval] <- as.numeric(format(round(tp_df[1,colval],3), nsmall = 3))
+            }
+            colnames(tp_df) <- c("Time (min)", "Ester", "Triglyceride", "Diglyceride", "Monoglyceride", "Alcohol", "Glycerol", "Soap", "Hydroxide")
+            # render data table of values
+            print(typeof(tp_df[1,1]))
+            output$sim_tab <- renderDataTable(tp_df[1, ])
         })
         #### Generate Concentration Plot ####
         # generates plot upon trigger
