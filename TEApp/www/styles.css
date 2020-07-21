@@ -4,11 +4,11 @@
  */
  
 body {
-  background-color: #dae3e5;
+  background-color: #86bbd8;/*#dae3e5;*/
 }
 
-well{
-  background: #000000;
+.well{
+  background: #dae3e5;
 }
 
 hr {
