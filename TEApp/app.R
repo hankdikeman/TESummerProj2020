@@ -6,6 +6,7 @@
 # packages loaded
 library(shiny)
 library(tidyverse)
+library(shinycssloaders)
 print("packages loaded")
 
 # loads in all relevant helper functions
@@ -18,118 +19,120 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                 # overall using downloaded theme
                 # theme = 'bootstrap.css',
                 # horizontal line contrast set to high
-                tags$head(
-                    tags$style(
+                tags$head(tags$style(
                         HTML("hr {border-top: 1px solid #A9A9A9;}")
-                    )
-                ),
+                )),
                 # Webpage Title
                 wellPanel(h2(
-                    strong("Transesterification Reaction Simulation Module"),
-                    align = 'center'
+                        strong("Transesterification Reaction Simulation Module"),
+                        align = 'center'
                 )),
                 # Division of layout into sidebar and main section
                 sidebarLayout(
-                    #### Sidebar IC Entry Panel ####
-                    sidebarPanel(
-                        # title of sidebar
-                        tags$h3(tags$strong("Initial Conditions Entry"), align = 'center'),
-                        tags$hr(),
-                        # short blurb explanation
-                        tags$p(
-                            "Please select your initial reactant amounts, temperatures, and desired time of simulation below:"
+                        #### Sidebar IC Entry Panel ####
+                        sidebarPanel(
+                                # title of sidebar
+                                tags$h3(tags$strong("Initial Conditions Entry"), align = 'center'),
+                                tags$hr(),
+                                # short blurb explanation
+                                tags$p(
+                                        "Please select your initial reactant amounts, temperatures, and desired time of simulation below:"
+                                ),
+                                # selection of mass or volume input
+                                radioButtons(
+                                        "inputType",
+                                        "Ingredient Entry Type",
+                                        choices = c("By Mass", "By Volume"),
+                                        inline = TRUE
+                                ),
+                                # triglyceride amount added entry
+                                numericInput(
+                                        "tg_initial",
+                                        "Mass/Volume Triglyceride Added",
+                                        min = 0,
+                                        value = 1000
+                                ),
+                                # alcohol amount added entry
+                                numericInput(
+                                        "alc_initial",
+                                        "Mass/Volume Alcohol Added",
+                                        min = 0,
+                                        value = 200
+                                ),
+                                # sodium hydroxide added entry
+                                numericInput(
+                                        "oh_initial",
+                                        "Mass/Volume NaOH Added",
+                                        min = 0,
+                                        value = 2
+                                ),
+                                tags$hr(),
+                                # reaction temperature entry
+                                sliderInput(
+                                        "temp_initial",
+                                        "Reaction Temperature  (ºC)",
+                                        min = 20,
+                                        max = 70,
+                                        value = 25
+                                ),
+                                tags$hr(),
+                                # length of integration
+                                numericInput(
+                                        "t_length",
+                                        "Total Time of Integration (minutes)",
+                                        min = 0,
+                                        value = 150
+                                ),
+                                numericInput(
+                                        "step_size",
+                                        "Time step *[temporary]*",
+                                        min = 0.0001,
+                                        value = 5
+                                ),
+                                tags$hr(),
+                                # time step of integration
+                                # "go" button
+                                actionButton(inputId = "go",
+                                             label = "Generate Reaction Simulation")
                         ),
-                        # selection of mass or volume input
-                        radioButtons(
-                            "inputType",
-                            "Ingredient Entry Type",
-                            choices = c("By Mass", "By Volume"),
-                            inline = TRUE
-                        ),
-                        # triglyceride amount added entry
-                        numericInput(
-                            "tg_initial",
-                            "Mass/Volume Triglyceride Added",
-                            min = 0,
-                            value = 1000
-                        ),
-                        # alcohol amount added entry
-                        numericInput(
-                            "alc_initial",
-                            "Mass/Volume Alcohol Added",
-                            min = 0,
-                            value = 200
-                        ),
-                        # sodium hydroxide added entry
-                        numericInput(
-                            "oh_initial",
-                            "Mass/Volume NaOH Added",
-                            min = 0,
-                            value = 2
-                        ),
-                        tags$hr(),
-                        # reaction temperature entry
-                        sliderInput(
-                            "temp_initial",
-                            "Reaction Temperature  (ºC)",
-                            min = 20,
-                            max = 70,
-                            value = 25
-                        ),
-                        tags$hr(),
-                        # length of integration
-                        numericInput(
-                            "t_length",
-                            "Total Time of Integration (minutes)",
-                            min = 0,
-                            value = 150
-                        ),
-                        numericInput(
-                            "step_size",
-                            "Time step *[temporary]*",
-                            min = 0.0001,
-                            value = 5
-                        ),
-                        tags$hr(),
-                        # time step of integration
-                        # "go" button
-                        actionButton(inputId = "go",
-                                     label = "Generate Reaction Simulation")
-                    ),
-                    #### Main Results Panel ####
-                    # Show a plot of the generated distribution
-                    mainPanel(
-                        # title of main panel
-                        tags$h3(strong("Simulation Results"), align = 'center'),
-                        # addition of concentration or other plot
-                        wellPanel(plotOutput("concPlot"), style = "color:green;"),
-                        # selection of displayed graph
-                        selectInput(
-                            "graph_select",
-                            "Select the graph you would like to view:",
-                            choices = c("graph1", "graph2")
-                        ),
-                        tags$hr(),
-                        fluidRow(
-                            # selection of timepoint of interest
-                            sliderInput(
-                                "timept_select",
-                                "Select the Timepoint of Displayed Concentrations",
-                                min = 0,
-                                max = 150,
-                                value = 0,
-                                width = 800
-                            ),
-                            # table displaying species concentrations and title of table
-                            p(
-                                paste(
-                                    "Display of Dimensionless Species Concentrations At Specific Timepoint"
+                        #### Main Results Panel ####
+                        # Show a plot of the generated distribution
+                        mainPanel(
+                                conditionalPanel(
+                                        # only shows results stuff once go button has been clicked
+                                        condition = "input.go != 0",
+                                        # title of main panel
+                                        tags$h3(strong("Simulation Results"), align = 'center'),
+                                        # addition of concentration or other plot
+                                        wellPanel(plotOutput("concPlot") %>% withSpinner(color = "#000000")),
+                                        # selection of displayed graph
+                                        selectInput(
+                                                "graph_select",
+                                                "Select the graph you would like to view:",
+                                                choices = c("graph1", "graph2")
+                                        ),
+                                        tags$hr(),
+                                        fluidRow(
+                                                # selection of timepoint of interest
+                                                sliderInput(
+                                                        "timept_select",
+                                                        "Select the Timepoint of Displayed Concentrations",
+                                                        min = 0,
+                                                        max = 150,
+                                                        value = 0,
+                                                        width = 800
+                                                ),
+                                                # table displaying species concentrations and title of table
+                                                p(
+                                                        paste(
+                                                                "Display of Dimensionless Species Concentrations At Specific Timepoint"
+                                                        )
+                                                ),
+                                                tableOutput("sim_tab"),
+                                                plotOutput("yield_pie_plot")
+                                        )
                                 )
-                            ),
-                            tableOutput("sim_tab"),
-                            plotOutput("yield_pie_plot")
                         )
-                    )
                 ))
 
 #### Server Backend ####
