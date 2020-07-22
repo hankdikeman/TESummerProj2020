@@ -30,6 +30,11 @@ gen_Prod_Time <- function(T, TG, ROH, OH) {
   # integrate using initial conditions, scale factor, and time parameters
   ConcVals <- RK4(kvals, initialvals, time, dt, scale_factor)
   
+  timevals <- data.frame(matrix(0, nrow = time/dt+1, ncol = 1))
+  for(i in 1:((time/dt)+1)){timevals[i,1] <- (i-1)*dt}
+  time_series <- cbind(ConcVals,timevals)
+  colnames(time_series) = c(colnames(ConcVals),"time")
+  
   graph <- ggplot(data = time_series, aes(time)) + 
     geom_line(aes(y = Ester/(3*initialvals[1,2]), color = "Ester")) + 
     geom_line(aes(y = G, color = "Glycerol")) + 
