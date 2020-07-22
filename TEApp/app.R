@@ -17,6 +17,10 @@ print("functions loaded")
 
 #### UI ####
 ui <- fluidPage(#### Overall Style and Set-up ####
+                # head information
+                tags$head(
+                        tags$title("Transesterification Reaction Module")
+                ),
                 # CSS style sheet import
                 includeCSS("www/styles.css"),
                 # Webpage Title
@@ -30,7 +34,6 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                         sidebarPanel(
                                 # title of sidebar
                                 tags$h3(tags$strong("Initial Conditions Entry"), align = 'center'),
-                                tags$br(),
                                 tags$hr(),
                                 # short blurb explanation
                                 tags$p(
@@ -138,9 +141,11 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                         ),
                                                         align = 'center'
                                                 ),
-                                                column(12,
                                                 dataTableOutput("sim_tab")),
+                                        column(offset = 0, width = 12,
+                                                wellPanel(
                                                 plotOutput("yield_pie_plot")
+                                                )
                                         )
                                 )
                         )
