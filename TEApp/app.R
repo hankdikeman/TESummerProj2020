@@ -24,6 +24,7 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                 # CSS style sheet import
                 includeCSS("www/styles.css"),
                 # Webpage Title
+                tags$br(),
                 wellPanel(h2(
                         strong("Transesterification Reaction Simulation Module"),
                         align = 'center'
