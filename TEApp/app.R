@@ -133,7 +133,7 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                         min = 0,
                                                         max = 150,
                                                         value = 0,
-                                                        width = 800
+                                                        width = "100%"
                                                 ),
                                                 # table displaying species concentrations and title of table
                                                 tags$p(
@@ -153,7 +153,7 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                 ))
 
 #### Server Backend ####
-server <- function(input, output) {
+server <- function(input, output, session) {
         #### Initial Reactants Calculation ####
         IC_df <- eventReactive(input$go, {
             print(paste("IC generated", input$go))
@@ -210,7 +210,21 @@ server <- function(input, output) {
             colnames(tp_df) <- c("Time (min)", "Ester", "Triglyceride", "Diglyceride", "Monoglyceride", "Alcohol", "Glycerol", "Soap", "Hydroxide")
             # render data table of values
             output$sim_tab <- renderDataTable(tp_df[1, ])
+            
         })
+        
+        # Change slider length to match time input
+        observeEvent(input$go, {
+                slider_length <- input$t_length
+                updateSliderInput(
+                        session,
+                        "timept_select",
+                        value = 0,
+                        min = 0,
+                        max = slider_length)
+        })
+        
+        
         #### Generate Concentration Plot ####
         # generates plot upon trigger
         observeEvent(input$go, ({
