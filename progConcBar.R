@@ -6,17 +6,18 @@ progConcBar <- function(sim_vals) {
               prod_created = (lead(Ester) - (Ester))) %>%
     filter(!(is.na(prod_created))) %>%
     mutate(prod_created = prod_created / max(abs(prod_created))) %>%
-    mutate(posorneg = ifelse(prod_created <= 0, "neg", "pos"))
-
+    mutate(posorneg = factor(ifelse(prod_created <= 0, "neg", "pos"), levels = c("pos", "neg")))
+  print(added_prod)
   # Plot rate of change graph
-  ggplot(data = added_prod[,]) +
+  progConc <- ggplot(data = added_prod[, ]) +
     geom_area(
       mapping = aes(x = minutes, y = prod_created, fill = posorneg),
       color = "black",
       show.legend = FALSE
     ) +
-    scale_fill_manual(values = c("red", "green")) +
+    scale_fill_manual(values = c("#00ff00", "#ff0000")) +
     labs(title = "Rate of Product Formation Through Time") +
     xlab("time (min)") +
-    ylab("Normalized Rate of Change in Concentration")
+    ylab("Normalized Rate")
+  return(progConc)
 }
