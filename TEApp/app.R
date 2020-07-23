@@ -207,10 +207,11 @@ server <- function(input, output, session) {
             for(colval in 2:ncol(tp_df)){
                     tp_df[1,colval] <- as.numeric(format(round(tp_df[1,colval],3), nsmall = 3))
             }
-            colnames(tp_df) <- c("Time (min)", "Ester", "Triglyceride", "Diglyceride", "Monoglyceride", "Alcohol", "Glycerol", "Soap", "Hydroxide")
+            tab_df <- tp_df[1,2:ncol(tp_df)]
+            rownames(tab_df) <- c(paste(tp_df[1,1], "min"))
+            colnames(tab_df) <- c("Ester", "TriG", "DiG", "MonoG", "Alcohol", "Glycerol", "Soap", "Hydroxide")
             # render data table of values
-            output$sim_tab <- renderDataTable(tp_df[1, ])
-            
+            output$sim_tab <- renderDataTable(tab_df[1,])
         })
         
         # Change slider length to match time input

@@ -26,7 +26,7 @@
 #### RK4 Function ####
 RK4 <- function(k, C0, time, dt, sf) {
   # determine number of steps and concentration dataframe
-  t_steps <- (time %/% dt) + 1
+  t_steps <- (time / dt) %/% 1 + 1
   C <- C0
   # preallocate space
   C[2:t_steps,] <- 0
