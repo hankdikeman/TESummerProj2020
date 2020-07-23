@@ -7,5 +7,5 @@ gen_table_vals <- function(kvalues, arrVals){
     kvals[i,] <- (kvalues[i])
     kvals
   }
-  ##return kvals
+  return (kvals)
 }
