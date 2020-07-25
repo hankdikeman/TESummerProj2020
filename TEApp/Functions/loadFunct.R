@@ -10,4 +10,7 @@ loadfunct <- function(){
   # k calculation functions
   source("./Functions/k_gen.R")
   source("./Functions/k_set.R")
+  # Scale factor functions
+  source("./Functions/scale_factor_wt.R")
+  source("./Functions/scale_factor_vol.R")
 }

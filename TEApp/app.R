@@ -158,23 +158,33 @@ server <- function(input, output, session) {
         IC_df <- eventReactive(input$go, {
             print(paste("IC generated", input$go))
             if (input$inputType == "By Mass") {
-                IC_df <- IC_vol(input$tg_initial, input$oh_initial, input$alc_initial)
-            }
-            else{
                 IC_df <- IC_wt(input$tg_initial, input$oh_initial, input$alc_initial)
             }
+            else{
+                IC_df <- IC_vol(input$tg_initial, input$oh_initial, input$alc_initial)
+            }
             print(IC_df)
-            IC_df
+        })
+        
+        ### Scale factor generation function 
+        scl_fctr <- eventReactive(input$go, {
+                if (input$inputType == "By Mass") {
+                        scl_fctr <- scale_factor_wt(input$tg_initial, input$oh_initial, input$alc_initial)
+                }
+                else{
+                        scl_fctr <- scale_factor_vol(input$tg_initial, input$oh_initial, input$alc_initial)
+                }
         })
         
         #### RK4 Simulation ####
         sim_df <- eventReactive(input$go, {
             print(paste("reaction simulated",input$go))
+        
             # calculate k values
             k_df <- k_set((input$temp_initial + 273)) / 60
             # numerical integration
             sim_conc <-
-                RK4(k_df, IC_df(), input$t_length, input$step_size, 1.065)
+                RK4(k_df, IC_df(), input$t_length, input$step_size, scl_fctr())
             # setting timepoint variable, rearranging so it's first
             sim_conc[, (ncol(sim_conc) + 1)] <-
                 seq(
@@ -202,6 +212,11 @@ server <- function(input, output, session) {
                     labels = c(paste("Converted Fatty Acids",perc_conv[1],"%"), paste("Unconverted Fatty Acids",perc_conv[2],"%"), paste("Saponified Fatty Acids",perc_conv[3],"%")),
                     main = paste("Conversion Percentage at",input$timept_select,"minutes")
                 ))
+            
+            # Re-dimensionalize concentration values in data table to molarity
+            tp_df[1,2:9] <- tp_df[1,2:9]*scl_fctr()
+            print(paste(tp_df))
+            
             # rounds concentration and time values to friendlier looking form
             tp_df[1,1] <- as.numeric(format(round(tp_df[1,1],1), nsmall = 3))
             for(colval in 2:ncol(tp_df)){
@@ -210,8 +225,11 @@ server <- function(input, output, session) {
             tab_df <- tp_df[1,2:ncol(tp_df)]
             rownames(tab_df) <- c(paste(tp_df[1,1], "min"))
             colnames(tab_df) <- c("Ester", "TriG", "DiG", "MonoG", "Alcohol", "Glycerol", "Soap", "Hydroxide")
+            
             # render data table of values
             output$sim_tab <- renderDataTable(tab_df[1,])
+            
+            
         })
         
         # Change slider length to match time input
