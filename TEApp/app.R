@@ -115,13 +115,13 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                 tags$h3(strong("Simulation Results"), align = 'center'),
                                                 tags$br(),
                                                 # addition of concentration or other plot
-                                                plotOutput("concPlot") %>% withSpinner(color = "#000000")),
+                                                plotOutput("dispPlot") %>% withSpinner(color = "#000000")),
                                         # selection of displayed graph
                                         tags$p("Select the graph you would like to view:"),
                                         selectInput(
                                                 "graph_select",
                                                 NULL,
-                                                choices = c("graph1", "graph2")
+                                                choices = c("All Concentrations", "Product Gen Rate vs Time")
                                         ),
                                         tags$hr(),
                                         fluidRow(
@@ -138,7 +138,7 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                 # table displaying species concentrations and title of table
                                                 tags$p(
                                                         paste(
-                                                                "Dimensionless Species Concentrations At Selected Timepoint"
+                                                                "Species Concentrations (mol/L)"
                                                         ),
                                                         align = 'center'
                                                 ),
@@ -155,6 +155,8 @@ ui <- fluidPage(#### Overall Style and Set-up ####
 #### Server Backend ####
 server <- function(input, output, session) {
         #### Initial Reactants Calculation ####
+        sim_temp <- eventReactive(input$go,input$temp_initial)
+        
         IC_df <- eventReactive(input$go, {
             print(paste("IC generated", input$go))
             if (input$inputType == "By Mass") {
@@ -169,11 +171,12 @@ server <- function(input, output, session) {
         ### Scale factor generation function 
         scl_fctr <- eventReactive(input$go, {
                 if (input$inputType == "By Mass") {
-                        scl_fctr <- scale_factor_wt(input$tg_initial, input$oh_initial, input$alc_initial)
+                    scl_fctr <- scale_factor_wt(input$tg_initial, input$oh_initial, input$alc_initial)
                 }
                 else{
-                        scl_fctr <- scale_factor_vol(input$tg_initial, input$oh_initial, input$alc_initial)
+                    scl_fctr <- scale_factor_vol(input$tg_initial, input$oh_initial, input$alc_initial)
                 }
+                print(scl_fctr)
         })
         
         #### RK4 Simulation ####
@@ -215,8 +218,7 @@ server <- function(input, output, session) {
             
             # Re-dimensionalize concentration values in data table to molarity
             tp_df[1,2:9] <- tp_df[1,2:9]*scl_fctr()
-            print(paste(tp_df))
-            
+
             # rounds concentration and time values to friendlier looking form
             tp_df[1,1] <- as.numeric(format(round(tp_df[1,1],1), nsmall = 3))
             for(colval in 2:ncol(tp_df)){
@@ -228,8 +230,6 @@ server <- function(input, output, session) {
             
             # render data table of values
             output$sim_tab <- renderDataTable(tab_df[1,])
-            
-            
         })
         
         # Change slider length to match time input
@@ -242,40 +242,20 @@ server <- function(input, output, session) {
                         min = 0,
                         max = slider_length)
         })
-        
-        
-        #### Generate Concentration Plot ####
-        # generates plot upon trigger
-        observeEvent(input$go, ({
-            output$concPlot <- renderPlot({
-                isolate({
-                print(paste("plot made", input$go))
-                speciesPlot <-
-                    ggplot(data = sim_df(), aes(minutes)) +
-                    geom_line(aes(y = E / (3), color = "Ester")) +
-                    geom_line(aes(y = TG, color = "Triglyceride")) +
-                    geom_line(aes(y = DG, color = "Diglyceride")) +
-                    geom_line(aes(y = MG, color = "Monoglyceride")) +
-                    geom_line(aes(y = ROH / IC_df()[1, 5], color = "Alcohol")) +
-                    geom_line(aes(y = OH / IC_df()[1, 8], color = "Hydroxide")) +
-                    geom_line(aes(y = G, color = "Glycerol")) +
-                    geom_line(aes(y = S, color = "Soap")) +
-                    labs(title = "Species Concentration as a Function of Time", subtitle = paste("Temp = ", input$temp_initial, "ºC")) +
-                    xlab("time (min)") +
-                    ylab("Normalized Species Concentration") +
-                    scale_color_discrete(name = "Reaction Species")
-                return(speciesPlot)
-                })
-            })
-        }))
-        
-        
-        #### Generate Rate of Conv Plot ####
-        # generates plot upon trigger
-        
+
+        #### Generate All Graphs ####
+        # generates graphs upon simulation trigger
         
         #### Selection of Displayed Plot ####
-        
+        observeEvent(input$graph_select, ({
+                output$dispPlot <- renderPlot({
+                        switch(
+                                input$graph_select,
+                                "All Concentrations" = totalConcPlot(sim_df(), sim_temp(), IC_df()),
+                                "Product Gen Rate vs Time" = progConcBar(sim_df(), sim_temp())
+                        )
+                }) 
+        }))
 }
 
 # Run the application 

@@ -1,6 +1,6 @@
-totalConcPlot <- function(conc_df, temp, IC_df) {
+totalConcPlot <- function(sim_vals, temp, IC_df) {
   speciesPlot <-
-    ggplot(data = conc_df, aes(x = minutes)) +
+    ggplot(data = sim_vals, aes(x = minutes)) +
     geom_line(aes(y = E / (3), color = "Ester")) +
     geom_line(aes(y = TG, color = "Triglyceride")) +
     geom_line(aes(y = DG, color = "Diglyceride")) +
@@ -10,9 +10,10 @@ totalConcPlot <- function(conc_df, temp, IC_df) {
     geom_line(aes(y = G, color = "Glycerol")) +
     geom_line(aes(y = S, color = "Soap")) +
     labs(title = "Species Concentration as a Function of Time",
-         subtitle = paste("Temp = ", input$temp_initial, "ºC")) +
+         subtitle = paste("Temp = ", temp, "ºC")) +
     xlab("time (min)") +
     ylab("Normalized Species Concentration") +
-    scale_color_discrete(name = "Reaction Species")
+    scale_color_discrete(name = "Reaction Species") 
+
   return(speciesPlot)
 }
