@@ -250,6 +250,14 @@ server <- function(input, output, session) {
                 })
             })
         }))
+        
+        
+        #### Generate Rate of Conv Plot ####
+        # generates plot upon trigger
+        
+        
+        #### Selection of Displayed Plot ####
+        
 }
 
 # Run the application 
