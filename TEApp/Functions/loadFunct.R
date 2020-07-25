@@ -10,7 +10,13 @@ loadfunct <- function(){
   # k calculation functions
   source("./Functions/k_gen.R")
   source("./Functions/k_set.R")
+<<<<<<< HEAD
   # graphing functions
   source("./Functions/totalConcPlot.R")
   source("./Functions/progConcBar.R")
+=======
+  # Scale factor functions
+  source("./Functions/scale_factor_wt.R")
+  source("./Functions/scale_factor_vol.R")
+>>>>>>> 500ef0de7cf1794f0c36df080ee13f071013f35b
 }
