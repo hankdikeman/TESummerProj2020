@@ -53,7 +53,7 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                         "tg_initial",
                                         NULL,
                                         min = 0,
-                                        value = 1000
+                                        value = 1000,
                                 ),
                                 # alcohol amount added entry
                                 tags$p("Mass/Volume Alcohol Added"),
@@ -117,11 +117,27 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                 # addition of concentration or other plot
                                                 plotOutput("dispPlot") %>% withSpinner(color = "#000000")),
                                         # selection of displayed graph
-                                        tags$p("Select the graph you would like to view:"),
+                                        fluidRow(
+                                        column(width = 4,
                                         selectInput(
                                                 "graph_select",
-                                                NULL,
+                                                label = "Select the graph you would like to view",
                                                 choices = c("All Concentrations", "Product Gen Rate vs Time")
+                                        )),
+                                        column(width = 8,
+                                        conditionalPanel(
+                                                condition = "input.graph_select == 'All Concentrations'",
+                                                wellPanel(
+                                                        checkboxGroupInput(
+                                                        "species_sel",
+                                                        label = "Select Species for Concentration Graph",
+                                                        inline = TRUE,
+                                                        choiceNames = c("E","TG","DG","MG","ROH","G","S","OH"),
+                                                        choiceValues = c(1,2,3,4,5,6,7,8),
+                                                        selected = c(1,2,3,4,5,6,7,8)
+                                                        )
+                                                ),
+                                                ))
                                         ),
                                         tags$hr(),
                                         fluidRow(
@@ -136,12 +152,7 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                         width = "100%"
                                                 ),
                                                 # table displaying species concentrations and title of table
-                                                tags$p(
-                                                        paste(
-                                                                "Species Concentrations (mol/L)"
-                                                        ),
-                                                        align = 'center'
-                                                ),
+                                                tags$p(paste("Species Concentrations (mol/L)"), align = 'center'),
                                                 dataTableOutput("sim_tab")),
                                         column(offset = 0, width = 12,
                                                 wellPanel(
@@ -247,11 +258,11 @@ server <- function(input, output, session) {
         # generates graphs upon simulation trigger
         
         #### Selection of Displayed Plot ####
-        observeEvent(input$graph_select, ({
+        observeEvent(c(input$graph_select,input$disp_species), ({
                 output$dispPlot <- renderPlot({
                         switch(
                                 input$graph_select,
-                                "All Concentrations" = totalConcPlot(sim_df(), sim_temp(), IC_df()),
+                                "All Concentrations" = totalConcPlot(sim_df(), sim_temp(), IC_df(),input$species_sel),
                                 "Product Gen Rate vs Time" = progConcBar(sim_df(), sim_temp())
                         )
                 }) 
