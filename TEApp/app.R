@@ -128,6 +128,7 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                         conditionalPanel(
                                                 condition = "input.graph_select == 'All Concentrations'",
                                                 wellPanel(
+                                                        tags$div(
                                                         checkboxGroupInput(
                                                         "species_sel",
                                                         label = "Select Species for Concentration Graph",
@@ -135,6 +136,8 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                         choiceNames = c("E","TG","DG","MG","ROH","G","S","OH"),
                                                         choiceValues = c(1,2,3,4,5,6,7,8),
                                                         selected = c(1,2,3,4,5,6,7,8)
+                                                        ),
+                                                        align = 'center'
                                                         )
                                                 ),
                                                 ))
