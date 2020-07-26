@@ -143,9 +143,11 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                 ))
                                         ),
                                         tags$hr(),
+                                        wellPanel(
                                         fluidRow(
                                                 # selection of timepoint of interest
-                                                tags$p("Select the Timepoint of Displayed Concentrations"),
+                                                column(width = 12,
+                                                tags$p("Select the Timepoint of Displayed Concentrations (minutes)", align = 'center'),
                                                 sliderInput(
                                                         "timept_select",
                                                         NULL,
@@ -153,15 +155,15 @@ ui <- fluidPage(#### Overall Style and Set-up ####
                                                         max = 150,
                                                         value = 0,
                                                         width = "100%"
-                                                ),
+                                                ))),
+                                                hr(),
                                                 # table displaying species concentrations and title of table
                                                 tags$p(paste("Species Concentrations (mol/L)"), align = 'center'),
-                                                dataTableOutput("sim_tab")),
-                                        column(offset = 0, width = 12,
-                                                wellPanel(
+                                                dataTableOutput("sim_tab"),
+                                                hr(),
                                                 plotOutput("yield_pie_plot")
-                                                )
-                                        )
+                                        
+                                )
                                 )
                         )
                 ))
