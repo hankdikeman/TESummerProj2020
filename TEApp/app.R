@@ -122,6 +122,7 @@ ui <- fluidPage(
                                                 htmlOutput("blurb_explanation")
                                         )
                                 ),
+                                tags$hr(),
                                 wellPanel(
                                         # addition of concentration or other plot
                                         plotOutput("dispPlot") %>% withSpinner(color = "#000000")
@@ -173,7 +174,7 @@ ui <- fluidPage(
                                                         )
                                                 )
                                         ),
-                                        hr(),
+                                        tags$hr(),
                                         # table displaying species concentrations and title of table
                                         tags$p(paste("Species Concentrations (mol/L)"), align = 'center'),
                                         dataTableOutput("sim_tab"),
@@ -193,38 +194,35 @@ server <- function(input, output, session) {
         sim_temp <- eventReactive(input$go,input$temp_initial)
         
         # Document what initial conditions for displayed results and print them in HTML format
-        observeEvent(input$go, ({
-                isolate({
+        observeEvent(sim_df(), ({
                         if (input$inputType == "By Mass"){
-                                print("this works")
                                 output$blurb_explanation <- renderUI(
-                                        HTML(paste(
-                                                paste("<strong>   Triglyceride mass (g) --</strong>", input$tg_initial),
-                                                paste("<strong>   Alcohol mass (g) --</strong>", input$alc_initial),
-                                                paste("<strong>   Sodium Hydroxide mass (g) --</strong>", input$oh_initial),
-                                                paste("<strong>   Reaction Temperature (ºC) --</strong>", input$temp_initial),
-                                                paste("<strong>   Simulation time and timestep (min) --</strong>",input$t_length,"minutes simulated,",input$step_size,"minute timestep"),
+                                        isolate(HTML(paste(
+                                                paste("<strong>   Triglyceride mass (g) --></strong>", input$tg_initial),
+                                                paste("<strong>   Alcohol mass (g) --></strong>", input$alc_initial),
+                                                paste("<strong>   Sodium Hydroxide mass (g) --></strong>", input$oh_initial),
+                                                paste("<strong>   Reaction Temperature (ºC) --></strong>", input$temp_initial),
+                                                paste("<strong>   Simulation time and timestep (min) --></strong>",input$t_length,"minutes simulated,",input$step_size,"minute timestep"),
                                                 sep = "<br/>"
-                                        )
-                                        )
+                                                )
+                                        ))
                                 )
-                                print("it worked")
                         }
                         else{
                                 output$blurb_explanation <- renderUI(
-                                        HTML(paste(
-                                                paste("<strong>   Triglyceride volume (mL) --</strong>", input$tg_initial),
-                                                paste("<strong>   Alcohol volume (mL) --</strong>", input$alc_initial),
-                                                paste("<strong>   Sodium Hydroxide mass (g) --</strong>", input$oh_initial),
-                                                paste("<strong>   Reaction Temperature (ºC) --</strong>", input$temp_initial),
-                                                paste("<strong>   Simulation time and timestep (min) --</strong>",input$t_length,"minutes simulated,",input$step_size,"minute timestep"),
+                                        isolate(HTML(paste(
+                                                paste("<strong>   Triglyceride volume (mL) --></strong>", input$tg_initial),
+                                                paste("<strong>   Alcohol volume (mL) --></strong>", input$alc_initial),
+                                                paste("<strong>   Sodium Hydroxide mass (g) --></strong>", input$oh_initial),
+                                                paste("<strong>   Reaction Temperature (ºC) --></strong>", input$temp_initial),
+                                                paste("<strong>   Simulation time and timestep (min) --></strong>",input$t_length,"minutes simulated,",input$step_size,"minute timestep"),
                                                 sep = "<br/>"
-                                        )
-                                        )
+                                                )
+                                        ))
                                 )
                         }
-                })
         }))
+        
         
         IC_df <- eventReactive(input$go, {
             print(paste("IC generated", input$go))
