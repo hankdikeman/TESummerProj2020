@@ -50,7 +50,7 @@ ui <- fluidPage(
                         tags$h3(tags$strong("Initial Conditions Entry"), align = 'center'),
                         tags$hr(),
                         # short blurb explanation
-                        tags$p("Please select your initial reactant amounts, temperatures, and desired time of simulation below:"),
+                        tags$p("Please enter your initial reactant amounts, temperatures, and desired time of simulation below:"),
                         # selection of mass or volume input
                         radioButtons(
                                 "inputType",
@@ -59,19 +59,19 @@ ui <- fluidPage(
                                 inline = TRUE
                         ),
                         # triglyceride amount added entry
-                        tags$p("Mass/Volume Triglyceride Added"),
+                        textOutput("TG_Label"),
                         numericInput("tg_initial",
                                      NULL,
                                      min = 0,
                                      value = 1000,),
                         # alcohol amount added entry
-                        tags$p("Mass/Volume Alcohol Added"),
+                        textOutput("Alc_Label"),
                         numericInput("alc_initial",
                                      NULL,
                                      min = 0,
                                      value = 200),
                         # sodium hydroxide added entry
-                        tags$p("Mass/Volume NaOH Added"),
+                        textOutput("OH_Label"),
                         numericInput("oh_initial",
                                      NULL,
                                      min = 0,
@@ -283,8 +283,23 @@ server <- function(input, output, session) {
                 }) 
         }))
         
+        # update labels on input functions for mass/volume addition
+        observeEvent(input$inputType, ({
+                if(input$inputType == "By Mass") {
+                        output$TG_Label <- renderText("Mass of Triglyceride Added (g)")
+                        output$Alc_Label <- renderText("Mass of Alcohol Added (g)")
+                        output$OH_Label <- renderText("Mass of Sodium Hydroxide Added (g)")
+                }
+                else{
+                        output$TG_Label <- renderText("Volume of Triglyceride Added (mL)")
+                        output$Alc_Label <- renderText("Volume of Alcohol Added (mL)")
+                        output$OH_Label <- renderText("Mass of Sodium Hydroxide Added (g)")
+                }
+        })
+        )
+        
         # hide loading screen, show rest of content
-        Sys.sleep(0.5)
+        Sys.sleep(0.75)
         hide(id = "loading-content", anim = TRUE, animType = "slide")    
         show("app-content")
 }
