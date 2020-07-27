@@ -47,10 +47,10 @@ ui <- fluidPage(
                 #### Sidebar IC Entry Panel ####
                 sidebarPanel(
                         # title of sidebar
-                        tags$h3(tags$strong("Initial Conditions Entry"), align = 'center'),
-                        tags$hr(),
+                        tags$h2(tags$strong("Initial Conditions Entry"), align = 'center'),
                         # short blurb explanation
-                        tags$p("Please enter your initial reactant amounts, temperatures, and desired time of simulation below:"),
+                        tags$p("Please enter your initial reactant amounts, temperatures, and desired length of simulation below:", align = 'center'),
+                        tags$hr(),
                         # selection of mass or volume input
                         radioButtons(
                                 "inputType",
@@ -113,8 +113,16 @@ ui <- fluidPage(
                                 # results wellPanel
                                 wellPanel(
                                         # title of main panel
-                                        tags$h3(strong("Simulation Results"), align = 'center'),
-                                        tags$br(),
+                                        tags$h2(strong("Simulation Results"), align = 'center')
+                                ),
+                                wellPanel(
+                                        tags$p(tags$strong("Simulation results for transesterification reaction with following starting conditions:")),
+                                        tags$div(
+                                                id = "blurb",
+                                                htmlOutput("blurb_explanation")
+                                        )
+                                ),
+                                wellPanel(
                                         # addition of concentration or other plot
                                         plotOutput("dispPlot") %>% withSpinner(color = "#000000")
                                 ),
@@ -134,6 +142,7 @@ ui <- fluidPage(
                                                 conditionalPanel(condition = "input.graph_select == 'All Concentrations'",
                                                                  wellPanel(
                                                                          tags$div(
+                                                                                 id = "selection_species",
                                                                                  checkboxGroupInput(
                                                                                          "species_sel",
                                                                                          label = "Select Species for Concentration Graph",
@@ -182,6 +191,40 @@ ui <- fluidPage(
 server <- function(input, output, session) {
         #### Initial Reactants Calculation ####
         sim_temp <- eventReactive(input$go,input$temp_initial)
+        
+        # Document what initial conditions for displayed results and print them in HTML format
+        observeEvent(input$go, ({
+                isolate({
+                        if (input$inputType == "By Mass"){
+                                print("this works")
+                                output$blurb_explanation <- renderUI(
+                                        HTML(paste(
+                                                paste("<strong>   Triglyceride mass (g) --</strong>", input$tg_initial),
+                                                paste("<strong>   Alcohol mass (g) --</strong>", input$alc_initial),
+                                                paste("<strong>   Sodium Hydroxide mass (g) --</strong>", input$oh_initial),
+                                                paste("<strong>   Reaction Temperature (ºC) --</strong>", input$temp_initial),
+                                                paste("<strong>   Simulation time and timestep (min) --</strong>",input$t_length,"minutes simulated,",input$step_size,"minute timestep"),
+                                                sep = "<br/>"
+                                        )
+                                        )
+                                )
+                                print("it worked")
+                        }
+                        else{
+                                output$blurb_explanation <- renderUI(
+                                        HTML(paste(
+                                                paste("<strong>   Triglyceride volume (mL) --</strong>", input$tg_initial),
+                                                paste("<strong>   Alcohol volume (mL) --</strong>", input$alc_initial),
+                                                paste("<strong>   Sodium Hydroxide mass (g) --</strong>", input$oh_initial),
+                                                paste("<strong>   Reaction Temperature (ºC) --</strong>", input$temp_initial),
+                                                paste("<strong>   Simulation time and timestep (min) --</strong>",input$t_length,"minutes simulated,",input$step_size,"minute timestep"),
+                                                sep = "<br/>"
+                                        )
+                                        )
+                                )
+                        }
+                })
+        }))
         
         IC_df <- eventReactive(input$go, {
             print(paste("IC generated", input$go))

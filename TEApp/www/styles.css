@@ -21,6 +21,18 @@ hr {
   border-top: 1px solid #000000;
 }
 
+#selection_species {
+  font-size: 130%;
+}
+
+#blurb {
+  font-size: 80%;
+}
+
+#blurb-label{
+  font-size: 100%;
+}
+
 .irs-grid-text {
   color: #000000;
 }
