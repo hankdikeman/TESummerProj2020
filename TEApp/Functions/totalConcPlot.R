@@ -29,7 +29,7 @@ totalConcPlot <- function(sim_vals, temp, IC_df, disp_species) {
   }
   if(7 %in% disp_species) {
     species_plot <- species_plot + 
-    geom_line(aes(y = S, color = "Soap"))
+    geom_line(aes(y = S / (3), color = "Soap"))
   }
   if(8 %in% disp_species) {
     species_plot <- species_plot + 

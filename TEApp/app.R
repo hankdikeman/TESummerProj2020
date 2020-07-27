@@ -1,5 +1,5 @@
 ###
-#  This is the transesterification app code, which implements the numeric integration strategy
+#  This is the transesterification webpage code, which implements the numeric integration strategy
 #  developed by the biofuels team in Innovative Engineers UMN
 ###
 #### Set-Up and Loading Packages ####
@@ -9,6 +9,10 @@ library(tidyverse)
 library(shinycssloaders)
 library(DT)
 library(shinyjs)
+# change plot font size
+theme_set(
+        theme_minimal(base_size = 17)
+)
 print("packages loaded")
 
 # loads in all relevant helper functions
@@ -116,10 +120,9 @@ ui <- fluidPage(
                                         tags$h2(strong("Simulation Results"), align = 'center')
                                 ),
                                 wellPanel(
-                                        tags$p(tags$strong("Simulation results for transesterification reaction with following starting conditions:")),
                                         tags$div(
                                                 id = "blurb",
-                                                htmlOutput("blurb_explanation")
+                                                textOutput("blurb_explanation")
                                         )
                                 ),
                                 tags$hr(),
@@ -193,32 +196,30 @@ server <- function(input, output, session) {
         #### Initial Reactants Calculation ####
         sim_temp <- eventReactive(input$go,input$temp_initial)
         
-        # Document what initial conditions for displayed results and print them in HTML format
+        # Document what initial conditions for displayed results, pass to output variable
         observeEvent(sim_df(), ({
                         if (input$inputType == "By Mass"){
-                                output$blurb_explanation <- renderUI(
-                                        isolate(HTML(paste(
-                                                paste("<strong>   Triglyceride mass (g) --></strong>", input$tg_initial),
-                                                paste("<strong>   Alcohol mass (g) --></strong>", input$alc_initial),
-                                                paste("<strong>   Sodium Hydroxide mass (g) --></strong>", input$oh_initial),
-                                                paste("<strong>   Reaction Temperature (ºC) --></strong>", input$temp_initial),
-                                                paste("<strong>   Simulation time and timestep (min) --></strong>",input$t_length,"minutes simulated,",input$step_size,"minute timestep"),
-                                                sep = "<br/>"
+                                output$blurb_explanation <- renderText(
+                                        isolate(
+                                                paste(
+                                                        "Triglyceride Mass (g) =",input$tg_initial,
+                                                        "g   ---   Alcohol Mass (g) =",input$alc_initial,
+                                                        "g   ---   Sodium Hydroxide Mass (g) =",input$oh_initial,
+                                                        "g   ---   Reaction Temperature (ºC) =",input$temp_initial,"ºC"
                                                 )
-                                        ))
+                                        )
                                 )
                         }
                         else{
-                                output$blurb_explanation <- renderUI(
-                                        isolate(HTML(paste(
-                                                paste("<strong>   Triglyceride volume (mL) --></strong>", input$tg_initial),
-                                                paste("<strong>   Alcohol volume (mL) --></strong>", input$alc_initial),
-                                                paste("<strong>   Sodium Hydroxide mass (g) --></strong>", input$oh_initial),
-                                                paste("<strong>   Reaction Temperature (ºC) --></strong>", input$temp_initial),
-                                                paste("<strong>   Simulation time and timestep (min) --></strong>",input$t_length,"minutes simulated,",input$step_size,"minute timestep"),
-                                                sep = "<br/>"
+                                output$blurb_explanation <- renderText(
+                                        isolate(
+                                                paste(
+                                                        "Triglyceride Vol (mL) =",input$tg_initial,
+                                                        "g  ---   Alcohol Vol (mL) =",input$alc_initial,
+                                                        "g  ---   Sodium Hydroxide Mass (g) =",input$oh_initial,
+                                                        "g  ---   Reaction Temperature (ºC) =",input$temp_initial,"ºC"
                                                 )
-                                        ))
+                                        )
                                 )
                         }
         }))
