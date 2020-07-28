@@ -7,7 +7,6 @@
 library(shiny)
 library(tidyverse)
 library(shinycssloaders)
-library(DT)
 library(shinyjs)
 library(shinyWidgets)
 # change plot font size
@@ -149,6 +148,7 @@ ui <- fluidPage(
                                 fluidRow(
                                         column(
                                                 width = 4,
+                                                tags$br(),
                                                 selectInput(
                                                         "graph_select",
                                                         label = "Select the graph you would like to view",
