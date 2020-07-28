@@ -9,6 +9,7 @@ library(tidyverse)
 library(shinycssloaders)
 library(DT)
 library(shinyjs)
+library(shinyWidgets)
 # change plot font size
 theme_set(
         theme_minimal(base_size = 17)
@@ -56,11 +57,12 @@ ui <- fluidPage(
                         tags$p("Please enter your initial reactant amounts, temperatures, and desired length of simulation below:", align = 'center'),
                         tags$hr(),
                         # selection of mass or volume input
-                        radioButtons(
+                        radioGroupButtons(
                                 "inputType",
                                 "Ingredient Entry Type",
                                 choices = c("By Mass", "By Volume"),
-                                inline = TRUE
+                                status = "primary",
+                                justified = TRUE
                         ),
                         # triglyceride amount added entry
                         textOutput("TG_Label"),
@@ -97,16 +99,29 @@ ui <- fluidPage(
                                      NULL,
                                      min = 0,
                                      value = 150),
-                        tags$p("Time step *[temporary]*"),
-                        numericInput("step_size",
-                                     NULL,
-                                     min = 0.0001,
-                                     value = 5),
+                        tags$p("Please select the desired simulation precision"),
+                        sliderTextInput(
+                                "precision_sel",
+                                NULL,
+                                choices = c(0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10),
+                                selected = 5,
+                                grid = T
+                        ), 
+                        # label under precision slider, showing effects on precision
+                        tags$p("More Precise <----------------------------> Less Precise",
+                               align = 'center'), 
                         tags$hr(),
                         # time step of integration
                         # "go" button
-                        actionButton(inputId = "go",
-                                     label = "Generate Reaction Simulation")
+                        tags$div(
+                                actionBttn(inputId = "go",
+                                        label = "Generate Reaction Simulation",
+                                        style = "jelly",
+                                        color = "primary",
+                                        size = "sm"
+                                   ),
+                                align = 'center'
+                        )
                 ),
                 #### Main Results Panel ####
                 # Show a plot of the generated distribution
@@ -147,13 +162,16 @@ ui <- fluidPage(
                                                                  wellPanel(
                                                                          tags$div(
                                                                                  id = "selection_species",
-                                                                                 checkboxGroupInput(
+                                                                                 checkboxGroupButtons(
                                                                                          "species_sel",
                                                                                          label = "Select Species for Concentration Graph",
-                                                                                         inline = TRUE,
                                                                                          choiceNames = c("E", "TG", "DG", "MG", "ROH", "G", "S", "OH"),
                                                                                          choiceValues = c(1, 2, 3, 4, 5, 6, 7, 8),
-                                                                                         selected = c(1, 2, 3, 4, 5, 6, 7, 8)
+                                                                                         selected = c(1, 2, 3, 4, 5, 6, 7, 8),
+                                                                                         justified = TRUE,
+                                                                                         checkIcon = list(yes = icon("ok",
+                                                                                                                     lib = "glyphicon")),
+                                                                                         status = "info"
                                                                                  ),
                                                                                  align = 'center'
                                                                          )
@@ -255,7 +273,7 @@ server <- function(input, output, session) {
             k_df <- k_set((input$temp_initial + 273)) / 60
             # numerical integration
             sim_conc <-
-                RK4(k_df, IC_df(), input$t_length, input$step_size, scl_fctr())
+                RK4(k_df, IC_df(), input$t_length, input$precision_sel, scl_fctr())
             # setting timepoint variable, rearranging so it's first
             sim_conc[, (ncol(sim_conc) + 1)] <-
                 seq(
