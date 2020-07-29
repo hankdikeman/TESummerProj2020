@@ -172,7 +172,7 @@ ui <- fluidPage(
                                                                                          checkIcon = list(yes = icon("ok",
                                                                                                                      lib = "glyphicon")),
                                                                                          status = "info"
-                                                                                 ),
+                                                                                         ),
                                                                                  align = 'center'
                                                                          )
                                                                  ),
@@ -233,9 +233,9 @@ server <- function(input, output, session) {
                                         isolate(
                                                 paste(
                                                         "Triglyceride Vol (mL) =",input$tg_initial,
-                                                        "g  ---   Alcohol Vol (mL) =",input$alc_initial,
-                                                        "g  ---   Sodium Hydroxide Mass (g) =",input$oh_initial,
-                                                        "g  ---   Reaction Temperature (ºC) =",input$temp_initial,"ºC"
+                                                        "g  --   Alcohol Vol (mL) =",input$alc_initial,
+                                                        "g  --   Sodium Hydroxide Mass (g) =",input$oh_initial,
+                                                        "g  --   Reaction Temperature (ºC) =",input$temp_initial,"ºC"
                                                 )
                                         )
                                 )

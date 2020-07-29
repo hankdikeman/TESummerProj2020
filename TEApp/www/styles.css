@@ -2,43 +2,84 @@
  * This is a collection of CSS styles that will be imported in the TEApp and serve as a header function
  * File created: 7/20/20
  */
- 
+
+/* change background color to bluish */
 body {
   background-color: #86bbd8;/*#dae3e5;*/
 }
 
+/* change color of "go" action button to bluish */
+.action-button.bttn.bttn-jelly.bttn-sm.bttn-primary input:checked~.state label:after {
+  color: #A901DB !important;
+}
+
+/* add border to well panels, change color to gray */
 .well{
   background: #dae3e5;
   border: 2px solid black;
-  height: 80%;
 }
 
+/* change font color to black */
 p {
-  color: black;
+  color: #000000;
 }
 
+/* set horizontal line color to black */
 hr {
   border-top: 1px solid #000000;
 }
 
+/* increase size for the input selecting displayed species on conc graph */
 #selection_species {
   font-size: 120%;
 }
 
+/* set position and weight of input variable summary expression */
 #blurb {
   font-size: 100%;
   text-align: center;
   font-weight: bold;
 }
 
-#blurb-label{
-  font-size: 100%;
+/* set bluish color for fill of slider */
+.irs-bar {
+  background: #86bbd8;
+  border-top: 1px solid #86bbd8;
+  border-bottom: 1px solid #86bbd8;
 }
 
+/* set blueish color for edge of slider */
+.irs-bar-edge {
+  background: #86bbd8;
+  border: 1px solid #86bbd8;
+}
+
+/* change color of "go" button to bluish */
+#go {
+  background: #86bbd8;
+  color: #000000;
+  font-weight: bold;
+  border: 1px solid #000000;
+}
+
+.checkbox :checked { 
+  background: #86bbd8; 
+}
+
+/* set black color for text under slider */
 .irs-grid-text {
   color: #000000;
 }
 
+/* set black color for tick marks on slider */
 .irs-grid-pol { 
   background: #000000;
+}
+
+/* change color of background for selected number to bluish*/
+.irs-from, .irs-to, .irs-single {
+  background: #86bbd8;
+  color: #000000;
+  font-weight: bold;
+  font-size: 85%;
 }
