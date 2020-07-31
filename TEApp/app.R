@@ -197,7 +197,7 @@ ui <- fluidPage(
                                         ),
                                         tags$hr(),
                                         # table displaying species concentrations and title of table
-                                        tags$p(paste("Species Concentrations (mol/L)"), align = 'center'),
+                                        tags$div(textOutput("table_label"), align = 'center'),
                                         dataTableOutput("sim_tab"),
                                         hr(),
                                         plotOutput("yield_pie_plot")
@@ -265,6 +265,10 @@ server <- function(input, output, session) {
                 print(scl_fctr)
         })
         
+        output$table_label <- renderText(
+                paste("Simulated Species Mass and Concentration Values at",input$timept_select,"min")
+        )
+        
         #### RK4 Simulation ####
         sim_df <- eventReactive(input$go, {
             print(paste("reaction simulated",input$go))
@@ -315,7 +319,7 @@ server <- function(input, output, session) {
             colnames(tab_df) <- c("Ester", "TriG", "DiG", "MonoG", "Alcohol", "Glycerol", "Soap", "Hydroxide")
             
             # render data table of values
-            output$sim_tab <- renderDataTable(tab_df[1,])
+            output$sim_tab <- renderDataTable(datatable(tab_df[1,], option = list(dom = 't')))
         })
         
         # Change slider length to match time input

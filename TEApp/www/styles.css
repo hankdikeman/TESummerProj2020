@@ -80,6 +80,6 @@ hr {
 .irs-from, .irs-to, .irs-single {
   background: #86bbd8;
   color: #000000;
-  font-weight: bold;
-  font-size: 85%;
+  font-size: 90%;
+  border: 1px solid #000000;
 }
