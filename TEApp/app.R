@@ -336,14 +336,13 @@ server <- function(input, output, session) {
             # Adds weight values to table data frame
             tab_df[2,] <- tp_df[1,2:ncol(tp_df)]
 
-            # rounds concentration and time values to friendlier looking form
-            for (rowval in 1:nrow(tab_df)) {
-                    for (colval in 1:ncol(tab_df)){
-                            tab_df[rowval, colval] <- as.numeric(format(round(tab_df[rowval, colval],3), nsmall = 3))
-                    }
+            # rounds concentration values to fewer decimal places
+            for (colval in 1:ncol(tab_df)){
+                    tab_df[1, colval] <- as.numeric(format(round(tab_df[1, colval], 3), nsmall = 3))
+                    tab_df[2, colval] <- as.numeric(format(round(tab_df[2, colval], 1), nsmall = 1))
             }
 
-            rownames(tab_df) <- c("Concentration (M)", "Weight (g)")
+            rownames(tab_df) <- c("Concentration (mol/L)", "Total Mass (grams)")
             colnames(tab_df) <- c("Ester", "TriG", "DiG", "MonoG", "Alcohol", "Glycerol", "Soap", "Hydroxide")
 
             # render data table of values
