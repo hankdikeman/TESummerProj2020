@@ -16,14 +16,14 @@ IC_vol <- function(TGvol, Lvol, Mvol) {
   
   # Run helper function IC_wt_help.R to obtain moles and volume of each species
   a <- IC_vol_help(pTG, MMTG, TGvol)
-  b <- IC_vol_help(pL, MML, Lvol)
+  b <- IC_wt_help(pL, MML, Lvol)
   c <- IC_vol_help(pM, MMM, Mvol)
   
   # Obtain total volume by summing second index of a-c
   total_vol <- (TGvol + Mvol)/1000
   
   # Concentrations of each species in a data frame [TG, L, MeOH]
-  conc <- data.frame(matrix(c(0, a, 0, 0, c, 0, 0, b), ncol = 8))/total_vol
+  conc <- data.frame(matrix(c(0, a, 0, 0, c, 0, 0, b[1,1]), ncol = 8))/total_vol
   
   # Return non-dimensionalized values in a dataframe by dividing by TG conc.
   Int_vals <- conc/conc[1,2]

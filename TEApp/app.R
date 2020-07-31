@@ -242,7 +242,7 @@ server <- function(input, output, session) {
                         }
         }))
         
-        
+        # Function to convert input masses/volumes into IC data frame form 
         IC_df <- eventReactive(input$go, {
             print(paste("IC generated", input$go))
             if (input$inputType == "By Mass") {
@@ -252,6 +252,19 @@ server <- function(input, output, session) {
                 IC_df <- IC_vol(input$tg_initial, input$oh_initial, input$alc_initial)
             }
             print(IC_df)
+        })
+        
+        # Function to generate volume based on initial reactant inputs (constant volume assumptiuon used)
+        get_vol <- eventReactive(input$go, {
+                # Densities of reactants (g/L or M)
+                pTG <- 0.93*1000
+                pAlc <- 0.791*1000
+                if (input$inputType == "By Mass") {
+                        get_vol <- (input$tg_initial/pTG + input$alc_initial/pAlc)
+                }
+                else{
+                        get_vol <- (input$tg_initial + input$alc_initial)
+                }
         })
         
         ### Scale factor generation function 
@@ -306,20 +319,35 @@ server <- function(input, output, session) {
                     main = paste("Conversion Percentage at",input$timept_select,"minutes")
                 ))
             
+            # Initialize table data frame 
+            tab_df <- data.frame(matrix(0, ncol = 8, nrow = 2))
+            
             # Re-dimensionalize concentration values in data table to molarity
-            tp_df[1,2:9] <- tp_df[1,2:9]*scl_fctr()
+            tp_df[1,2:ncol(tp_df)] <- tp_df[1,2:ncol(tp_df)]*scl_fctr()
+            
+            # Add concentrations to table data frame
+            tab_df[1,] <- tp_df[1,2:ncol(tp_df)]
+            
+            # print(paste(( tp_df[1,2:ncol(tp_df)]*get_vol())/(data.frame(matrix(c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), ncol = 8, nrow = 1))) ))
+            
+            # Converts time point data frame from concentration to weight (densities for ME, TG. DG, MG, and soap all r estimates/averages)
+            tp_df[1,2:ncol(tp_df)] <- (tp_df[1,2:ncol(tp_df)]*get_vol())*data.frame(matrix(c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), ncol = 8, nrow = 1))
+
+            # Adds weight values to table data frame
+            tab_df[2,] <- tp_df[1,2:ncol(tp_df)]
 
             # rounds concentration and time values to friendlier looking form
-            tp_df[1,1] <- as.numeric(format(round(tp_df[1,1],1), nsmall = 3))
-            for(colval in 2:ncol(tp_df)){
-                    tp_df[1,colval] <- as.numeric(format(round(tp_df[1,colval],3), nsmall = 3))
+            for (rowval in 1:nrow(tab_df)) {
+                    for (colval in 1:ncol(tab_df)){
+                            tab_df[rowval, colval] <- as.numeric(format(round(tab_df[rowval, colval],3), nsmall = 3))
+                    }
             }
-            tab_df <- tp_df[1,2:ncol(tp_df)]
-            rownames(tab_df) <- c(paste(tp_df[1,1], "min"))
+
+            rownames(tab_df) <- c("Concentration (M)", "Weight (g)")
             colnames(tab_df) <- c("Ester", "TriG", "DiG", "MonoG", "Alcohol", "Glycerol", "Soap", "Hydroxide")
-            
+
             # render data table of values
-            output$sim_tab <- renderDataTable(datatable(tab_df[1,], option = list(dom = 't')))
+            output$sim_tab <- renderDataTable(tab_df, option = list(dom = 't'))
         })
         
         # Change slider length to match time input
