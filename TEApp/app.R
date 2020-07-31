@@ -307,45 +307,42 @@ server <- function(input, output, session) {
         observeEvent(c(input$go, input$timept_select), {
             # find concentrations at the selected timepoint value
             print(paste("timepoint changed", input$go))
+                
+            # selects the timepoint nearest to the one selected, saves to dataframe
             tp_df <- filter(sim_df(), minutes >= input$timept_select) %>%
                     select(minutes, E:OH)
-            # generate pie plot at timepoint
+            # generate pie plot at selected timepoint, render for use in output
             slices <- c(tp_df$E[1], (tp_df$TG[1] * 3 + tp_df$DG[1] * 2 + tp_df$MG[1]), tp_df$S[1])
             perc_conv <- c(format(round(slices[1]/3*100,1), nsmall = 1), format(round(slices[2]/3*100,1), nsmall = 1),format(round(slices[3]/3*100,1), nsmall = 1))
             output$yield_pie_plot <-
-                renderPlot(pie(
-                    slices,
-                    labels = c(paste("Converted Fatty Acids",perc_conv[1],"%"), paste("Unconverted Fatty Acids",perc_conv[2],"%"), paste("Saponified Fatty Acids",perc_conv[3],"%")),
-                    main = paste("Conversion Percentage at",input$timept_select,"minutes")
-                ))
+                renderPlot(
+                        pie(
+                                slices,
+                                labels = c(paste("Converted Fatty Acids",perc_conv[1],"%"), paste("Unconverted Fatty Acids",perc_conv[2],"%"), paste("Saponified Fatty Acids",perc_conv[3],"%")),
+                                main = paste("Conversion Percentage at",input$timept_select,"minutes")
+                        )
+                )
             
             # Initialize table data frame 
             tab_df <- data.frame(matrix(0, ncol = 8, nrow = 2))
             
-            # Re-dimensionalize concentration values in data table to molarity
-            tp_df[1,2:ncol(tp_df)] <- tp_df[1,2:ncol(tp_df)]*scl_fctr()
+            # Calculates and adds to table redimensionalized concentrations
+            tab_df[1,] <- tp_df[1,2:ncol(tp_df)]*scl_fctr()
             
-            # Add concentrations to table data frame
-            tab_df[1,] <- tp_df[1,2:ncol(tp_df)]
-            
-            # print(paste(( tp_df[1,2:ncol(tp_df)]*get_vol())/(data.frame(matrix(c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), ncol = 8, nrow = 1))) ))
-            
-            # Converts time point data frame from concentration to weight (densities for ME, TG. DG, MG, and soap all r estimates/averages)
-            tp_df[1,2:ncol(tp_df)] <- (tp_df[1,2:ncol(tp_df)]*get_vol())*data.frame(matrix(c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), ncol = 8, nrow = 1))
+            # Calculates and adds to table mass values, calculated from dimensional concentrations
+            tab_df[2,] <- (tab_df[1,]*get_vol())*data.frame(matrix(c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), ncol = 8, nrow = 1))
 
-            # Adds weight values to table data frame
-            tab_df[2,] <- tp_df[1,2:ncol(tp_df)]
-
-            # rounds concentration values to fewer decimal places
+            # rounds concentration and total mass values to fewer decimal places
             for (colval in 1:ncol(tab_df)){
                     tab_df[1, colval] <- as.numeric(format(round(tab_df[1, colval], 3), nsmall = 3))
                     tab_df[2, colval] <- as.numeric(format(round(tab_df[2, colval], 1), nsmall = 1))
             }
-
+            
+            # sets column and row names for data table
             rownames(tab_df) <- c("Concentration (mol/L)", "Total Mass (grams)")
             colnames(tab_df) <- c("Ester", "TriG", "DiG", "MonoG", "Alcohol", "Glycerol", "Soap", "Hydroxide")
 
-            # render data table of values
+            # render timepoint data table
             output$sim_tab <- renderDataTable(tab_df, option = list(dom = 't'))
         })
         
