@@ -263,7 +263,7 @@ server <- function(input, output, session) {
                         get_vol <- (input$tg_initial/pTG + input$alc_initial/pAlc)
                 }
                 else{
-                        get_vol <- (input$tg_initial + input$alc_initial)
+                        get_vol <- (input$tg_initial + input$alc_initial)/1000
                 }
         })
         
