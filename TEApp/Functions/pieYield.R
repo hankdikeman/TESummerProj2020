@@ -1,6 +1,6 @@
 pieYield <- function(tp_df){
   # timepoint of measured yield
-  time_value <- tp_df$minutes[1]
+  time_value <- as.numeric(format(round(tp_df$minutes[1],1),nsmall = 1))
   
   # product, starting material, and soap concentrations
   conv_vals <- c(tp_df$E[1], (tp_df$TG[1] * 3 + tp_df$DG[1] * 2 + tp_df$MG[1]), tp_df$S[1])
