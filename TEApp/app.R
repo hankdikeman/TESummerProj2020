@@ -60,7 +60,6 @@ ui <- fluidPage(
                                 "inputType",
                                 "Ingredient Entry Type",
                                 choices = c("By Mass", "By Volume"),
-                                status = "primary",
                                 justified = TRUE
                         ),
                         # triglyceride amount added entry
@@ -170,8 +169,7 @@ ui <- fluidPage(
                                                                                          selected = c(1, 2, 3, 4, 5, 6, 7, 8),
                                                                                          justified = TRUE,
                                                                                          checkIcon = list(yes = icon("ok",
-                                                                                                                     lib = "glyphicon")),
-                                                                                         status = "info"
+                                                                                                                     lib = "glyphicon"))
                                                                                          ),
                                                                                  align = 'center'
                                                                          )
@@ -184,7 +182,7 @@ ui <- fluidPage(
                                         fluidRow(# selection of timepoint of interest
                                                 column(
                                                         width = 12,
-                                                        tags$p("Select the Timepoint of Displayed Concentrations (minutes)", align = 'center'),
+                                                        tags$p("Select the Timepoint of Interest (minutes)", align = 'center'),
                                                         sliderInput(
                                                                 "timept_select",
                                                                 NULL,
@@ -221,9 +219,9 @@ server <- function(input, output, session) {
                                         isolate(
                                                 paste(
                                                         "Triglyceride Mass (g) =",input$tg_initial,
-                                                        "g   ---   Alcohol Mass (g) =",input$alc_initial,
-                                                        "g   ---   Sodium Hydroxide Mass (g) =",input$oh_initial,
-                                                        "g   ---   Reaction Temperature (ºC) =",input$temp_initial,"ºC"
+                                                        "g   --   Alcohol Mass (g) =",input$alc_initial,
+                                                        "g   --   Sodium Hydroxide Mass (g) =",input$oh_initial,
+                                                        "g   --   Reaction Temperature (ºC) =",input$temp_initial,"ºC"
                                                 )
                                         )
                                 )
@@ -291,7 +289,7 @@ server <- function(input, output, session) {
             # numerical integration
             sim_conc <-
                 RK4(k_df, IC_df(), input$t_length, input$precision_sel, scl_fctr())
-            # setting timepoint variable, rearranging so it's first
+            # setting timepoint variable
             sim_conc[, (ncol(sim_conc) + 1)] <-
                 seq(
                     from = 0,
@@ -311,13 +309,9 @@ server <- function(input, output, session) {
             # selects the timepoint nearest to the one selected, saves to dataframe
             tp_df <- filter(sim_df(), minutes >= input$timept_select) %>%
                     select(minutes, E:OH)
-            # generate pie plot at selected timepoint, render for use in output
-            # slices <- c(tp_df$E[1], (tp_df$TG[1] * 3 + tp_df$DG[1] * 2 + tp_df$MG[1]), tp_df$S[1])
-            #  perc_conv <- c(format(round(slices[1]/3*100,1), nsmall = 1), format(round(slices[2]/3*100,1), nsmall = 1),format(round(slices[3]/3*100,1), nsmall = 1))
+            # renders pie plot to display yield
             output$yield_pie_plot <-
-                renderPlot(
-                        pieYield(tp_df[1,])
-                )
+                    renderPlot(pieYield(tp_df[1,]))
             
             # Initialize table data frame 
             tab_df <- data.frame(matrix(0, ncol = 8, nrow = 2))

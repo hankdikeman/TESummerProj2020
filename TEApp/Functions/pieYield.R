@@ -23,13 +23,11 @@ pieYield <- function(tp_df){
     coord_polar(theta = 'y') + 
     theme(
       axis.ticks = element_blank(),
-      # axis.text.y = element_blank(),
-      # axis.text.x = element_text(colour = 'black'),
       axis.title = element_blank(),
       axis.text = element_blank(),
       panel.grid  = element_blank()
     ) +
-    scale_fill_manual(values = c("#86BBD8","#F5B7B1","#D7DBDD"), name = "Reaction Mix Percentage") +
+    scale_fill_manual(values = c("#86BBD8","#F5B7B1","#D7DBDD"), name = "Fatty Acid Percentage") +
     labs(title = "Reaction Yield and Soap Formation Data",
          subtitle = paste("At time = ", time_value, "minutes")) 
 

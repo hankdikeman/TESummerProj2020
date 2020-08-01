@@ -8,9 +8,22 @@ body {
   background-color: #86bbd8;/*#dae3e5;*/
 }
 
-/* change color of "go" action button to bluish */
-.action-button.bttn.bttn-jelly.bttn-sm.bttn-primary input:checked~.state label:after {
-  color: #A901DB !important;
+.btn {
+  color: #000000; /* #2ecc71; */
+  border: 1px #000000 solid; /* #2ecc71 solid; */
+  background-color: #dae3e5;
+}
+
+.btn:hover {
+  color: #000000;
+  background-color: #FFFFFF;
+  border: 2px #000000 solid;
+}
+
+.btn-default.active, .btn-default:active, .open > .dropdown-toggle.btn-default {
+  color: #000000;
+  background-color: #86bbd8;
+  border: 2px #000000 solid;
 }
 
 /* add border to well panels, change color to gray */
@@ -36,7 +49,7 @@ hr {
 
 /* set position and weight of input variable summary expression */
 #blurb {
-  font-size: 100%;
+  font-size: 90%;
   text-align: center;
   font-weight: bold;
 }
