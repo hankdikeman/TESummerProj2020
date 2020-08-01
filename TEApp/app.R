@@ -312,15 +312,11 @@ server <- function(input, output, session) {
             tp_df <- filter(sim_df(), minutes >= input$timept_select) %>%
                     select(minutes, E:OH)
             # generate pie plot at selected timepoint, render for use in output
-            slices <- c(tp_df$E[1], (tp_df$TG[1] * 3 + tp_df$DG[1] * 2 + tp_df$MG[1]), tp_df$S[1])
-            perc_conv <- c(format(round(slices[1]/3*100,1), nsmall = 1), format(round(slices[2]/3*100,1), nsmall = 1),format(round(slices[3]/3*100,1), nsmall = 1))
+            # slices <- c(tp_df$E[1], (tp_df$TG[1] * 3 + tp_df$DG[1] * 2 + tp_df$MG[1]), tp_df$S[1])
+            #  perc_conv <- c(format(round(slices[1]/3*100,1), nsmall = 1), format(round(slices[2]/3*100,1), nsmall = 1),format(round(slices[3]/3*100,1), nsmall = 1))
             output$yield_pie_plot <-
                 renderPlot(
-                        pie(
-                                slices,
-                                labels = c(paste("Converted Fatty Acids",perc_conv[1],"%"), paste("Unconverted Fatty Acids",perc_conv[2],"%"), paste("Saponified Fatty Acids",perc_conv[3],"%")),
-                                main = paste("Conversion Percentage at",input$timept_select,"minutes")
-                        )
+                        pieYield(tp_df[1,])
                 )
             
             # Initialize table data frame 
