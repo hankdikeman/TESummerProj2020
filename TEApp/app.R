@@ -106,8 +106,13 @@ ui <- fluidPage(
                                 grid = T
                         ), 
                         # label under precision slider, showing effects on precision
-                        tags$p("More Precise <----------------------------> Less Precise",
-                               align = 'center'), 
+                        fluidRow(column(6,
+                                        tags$p("More Precise",
+                                               align = 'left', style = "font-size: 85%;")),
+                                 column(6,
+                                        tags$p("Less Precise",
+                                               align = 'right', style = "font-size: 85%;"))
+                        ), 
                         tags$hr(),
                         # time step of integration
                         # "go" button
@@ -151,7 +156,7 @@ ui <- fluidPage(
                                                 selectInput(
                                                         "graph_select",
                                                         label = "Select the graph you would like to view",
-                                                        choices = c("All Concentrations", "Product Gen Rate vs Time")
+                                                        choices = c("All Concentrations", "Product Gen Rate vs Time", "Catalyst Activity")
                                                 )
                                         ),
                                         # selection of displayed species in concentration graph
@@ -356,7 +361,8 @@ server <- function(input, output, session) {
                         switch(
                                 input$graph_select,
                                 "All Concentrations" = totalConcPlot(sim_df(), sim_temp(), IC_df(),input$species_sel),
-                                "Product Gen Rate vs Time" = progConcBar(sim_df(), sim_temp())
+                                "Product Gen Rate vs Time" = progConcBar(sim_df(), sim_temp()),
+                                "Catalyst Activity" = CatActivity(sim_df(), sim_temp())
                         )
                 }) 
         }))
