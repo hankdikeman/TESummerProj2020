@@ -24,7 +24,7 @@ print("functions loaded")
 ui <- fluidPage(
         # boot up shinyjs
         useShinyjs(),
-        setBackgroundImage(src = "GullBackground.jpg"),
+        setBackgroundImage(src = "RipplesBackground.png"),
         # Loading message
         div(
                 id = "loading-content",
