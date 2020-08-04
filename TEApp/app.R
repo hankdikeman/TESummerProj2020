@@ -97,7 +97,7 @@ ui <- fluidPage(
                                      NULL,
                                      min = 0,
                                      value = 150),
-                        tags$p("Please select the desired simulation precision"),
+                        tags$p("Please select the desired simulation precision (minutes)"),
                         sliderTextInput(
                                 "precision_sel",
                                 NULL,
