@@ -10,7 +10,7 @@ CatActivity <- function(sim_vals, temp) {
     ) +
     scale_fill_distiller(palette = "RdYlGn", trans = "reverse",
                          limits = c(1,0)) +
-    labs(title = "Catalyst Activity as a Function of Time",
+    labs(title = "Normalized Catalyst Activity (0 -> 1) as a Function of Time",
          subtitle = paste("Initial Catalyst Loading = ", temp, "ºC")) +
     xlab("time (min)") +
     ylab("Normalized Catalyst Activity") + 

@@ -24,11 +24,17 @@ print("functions loaded")
 ui <- fluidPage(
         # boot up shinyjs
         useShinyjs(),
+        setBackgroundImage(src = "GullBackground.jpg"),
         # Loading message
         div(
                 id = "loading-content",
                 br(),br(),br(),
-                h2("Reaction Module is Starting Up...", align = 'center')
+                h2("Reaction Module is Starting Up...", align = 'center', style = "font-size: 400%;"),
+                br(),br(),br(),
+                tags$div(
+                        tags$img(src = "IELogo2020.png", width = 600),
+                        align = 'center'
+                )
         ),
         
         # Divider and hidden function for loading in app content

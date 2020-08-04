@@ -4,9 +4,11 @@
  */
 
 /* change background color to bluish */
+/*
 body {
-  background-color: #86bbd8;/*#dae3e5;*/
+  background-color: #86bbd8;
 }
+*/
 
 .btn {
   color: #000000; /* #2ecc71; */
@@ -40,6 +42,10 @@ p {
 /* set horizontal line color to black */
 hr {
   border-top: 1px solid #000000;
+}
+
+img {
+  text-align: center;
 }
 
 /* increase size for the input selecting displayed species on conc graph */
