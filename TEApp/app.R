@@ -97,7 +97,7 @@ ui <- fluidPage(
                                      NULL,
                                      min = 0,
                                      value = 150),
-                        tags$p("Please select the desired simulation precision (mins)"),
+                        tags$p("Please select the desired simulation precision (minutes)"),
                         sliderTextInput(
                                 "precision_sel",
                                 NULL,
@@ -106,7 +106,7 @@ ui <- fluidPage(
                                 grid = T
                         ), 
                         # label under precision slider, showing effects on precision
-                        tags$p("More Precise <----------------------------> Less Precise",
+                        tags$p("More Precise <----------> Less Precise",
                                align = 'center'), 
                         tags$hr(),
                         # time step of integration
