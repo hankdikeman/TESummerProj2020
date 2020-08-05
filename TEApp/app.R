@@ -24,6 +24,8 @@ print("functions loaded")
 ui <- fluidPage(
         # boot up shinyjs
         useShinyjs(),
+        # boot up alert system
+        useSweetAlert(),
         setBackgroundImage(src = "RipplesBackground.png"),
         # Loading message
         div(
@@ -104,14 +106,7 @@ ui <- fluidPage(
                                      min = 0,
                                      value = 150),
                         tags$p("Please select the desired simulation precision (minutes)"),
-                        sliderTextInput(
-                                "precision_sel",
-                                NULL,
-                                choices = c(0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10),
-                                selected = 5,
-                                grid = T
-                        ), 
-                        # label under precision slider, showing effects on precision
+                        # label above precision slider, showing effects on precision
                         fluidRow(column(6,
                                         tags$p("More Precise",
                                                align = 'left', style = "font-size: 85%;")),
@@ -119,6 +114,14 @@ ui <- fluidPage(
                                         tags$p("Less Precise",
                                                align = 'right', style = "font-size: 85%;"))
                         ), 
+                        sliderTextInput(
+                                "precision_sel",
+                                NULL,
+                                choices = c(0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10),
+                                selected = 5,
+                                grid = T
+                        ), 
+                        
                         tags$hr(),
                         # time step of integration
                         # "go" button
@@ -209,7 +212,17 @@ ui <- fluidPage(
                                         tags$div(textOutput("table_label"), align = 'center'),
                                         dataTableOutput("sim_tab"),
                                         hr(),
-                                        plotOutput("yield_pie_plot")
+                                        plotOutput("yield_pie_plot"),
+                                        tags$hr(),
+                                        tags$div(
+                                                downloadBttn(
+                                                        "download_sim_conc",
+                                                        label = "Download Simulated Concentration Data As .csv Document",
+                                                        size = "xs",
+                                                        style = "pill"
+                                                ),
+                                                align = 'center'
+                                        )
                                         
                                 )
                         )
@@ -308,6 +321,18 @@ server <- function(input, output, session) {
                     length.out = nrow(sim_conc)
                 )
             colnames(sim_conc)[ncol(sim_conc)] <- "minutes"
+            
+            # warning message for failed simulation
+            failcondition <- (is.na(sim_conc[5,2]) || sim_conc[5,2] < 0 || sim_conc[5,2] > 1)
+            if(failcondition){
+                    sendSweetAlert(
+                            session = session,
+                            title = "Warning!",
+                            text = "Simulation precision may be too low for specified conditions, higher precision may be required.",
+                            type = "warning"
+                    )
+            }
+            
             # set concentration dataframe as output
             return(sim_conc)
         })
@@ -346,6 +371,16 @@ server <- function(input, output, session) {
             # render timepoint data table
             output$sim_tab <- renderDataTable(tab_df, option = list(dom = 't'))
         })
+        
+        #gives option to download concentration data
+        output$download_sim_conc <- downloadHandler(
+                filename = function() {
+                        paste("conc_(M)-", gsub(" ","-",Sys.time()), ".csv", sep="")
+                },
+                content = function(file) {
+                        write.csv(sim_df()*scl_fctr(), file)
+                }
+        )
         
         # Change slider length to match time input
         observeEvent(input$go, {
