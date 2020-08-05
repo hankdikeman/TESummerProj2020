@@ -402,7 +402,7 @@ server <- function(input, output, session) {
                                 input$graph_select,
                                 "All Concentrations" = totalConcPlot(sim_df(), sim_temp(), IC_df(),input$species_sel),
                                 "Product Gen Rate vs Time" = progConcBar(sim_df(), sim_temp()),
-                                "Catalyst Activity" = CatActivity(sim_df(), sim_temp())
+                                "Catalyst Activity" = CatActivity(sim_df())
                         )
                 }) 
         }))
