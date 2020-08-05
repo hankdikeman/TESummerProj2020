@@ -13,7 +13,7 @@ library(shinyWidgets)
 theme_set(
         theme_minimal(base_size = 17)
 )
-print("packages loaded")
+print("packages loaded, theme set")
 
 # loads in all relevant helper functions
 source("./Functions/loadFunct.R")
@@ -130,7 +130,7 @@ ui <- fluidPage(
                                         label = "Generate Reaction Simulation",
                                         style = "jelly",
                                         color = "primary",
-                                        size = "sm"
+                                        size = "md"
                                    ),
                                 align = 'center'
                         )
@@ -165,7 +165,7 @@ ui <- fluidPage(
                                                 selectInput(
                                                         "graph_select",
                                                         label = "Select the graph you would like to view",
-                                                        choices = c("All Concentrations", "Product Gen Rate vs Time", "Catalyst Activity")
+                                                        choices = c("All Concentrations", "Yield vs. Time", "Catalyst Activity")
                                                 )
                                         ),
                                         # selection of displayed species in concentration graph
@@ -188,6 +188,19 @@ ui <- fluidPage(
                                                                                  align = 'center'
                                                                          )
                                                                  ),
+                                                ),
+                                                conditionalPanel(condition = "input.graph_select == 'Yield vs. Time'",
+                                                                 wellPanel(
+                                                                         tags$p("Select Accumulation Timepoint (minutes)", align = 'center'),
+                                                                         sliderInput(
+                                                                                 "gen_rate_slider",
+                                                                                 NULL,
+                                                                                 min = 0,
+                                                                                 max = 150,
+                                                                                 value = 0,
+                                                                                 width = "100%"
+                                                                         )
+                                                                 )
                                                 )
                                         )
                                 ),
@@ -390,7 +403,20 @@ server <- function(input, output, session) {
                         value = 0,
                         min = 0,
                         max = slider_length)
+                updateSliderInput(
+                        session,
+                        "gen_rate_slider",
+                        value = 0,
+                        min = 0,
+                        max = slider_length
+                )
         })
+        
+        # gen rate slider update, updates the yield label on graph
+        observeEvent(input$gen_rate_slider, ({
+                output$dispPlot <- renderPlot(isolate(progConcBar(sim_df(), sim_temp(), input$gen_rate_slider)))
+        })
+        )
 
         #### Generate All Graphs ####
         # generates graphs upon simulation trigger
@@ -401,7 +427,7 @@ server <- function(input, output, session) {
                         switch(
                                 input$graph_select,
                                 "All Concentrations" = totalConcPlot(sim_df(), sim_temp(), IC_df(),input$species_sel),
-                                "Product Gen Rate vs Time" = progConcBar(sim_df(), sim_temp()),
+                                "Yield vs. Time" = progConcBar(sim_df(), sim_temp(), 0),
                                 "Catalyst Activity" = CatActivity(sim_df())
                         )
                 }) 
