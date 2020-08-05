@@ -218,8 +218,7 @@ ui <- fluidPage(
                                                 downloadBttn(
                                                         "download_sim_conc",
                                                         label = "Download Simulated Concentration Data As .csv Document",
-                                                        size = "xs",
-                                                        style = "pill"
+                                                        size = "xs"
                                                 ),
                                                 align = 'center'
                                         )
