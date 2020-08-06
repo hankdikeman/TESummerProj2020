@@ -22,7 +22,7 @@ progConcBar <- function(sim_vals,temp,accum_pt) {
     ) +
     geom_vline(xintercept = accum_pt, color = "black", size = 1.25) + 
     geom_text(aes(
-                  x = ifelse(accum_pt < max(sim_vals$minutes) / 2, accum_pt + 15, accum_pt - 15),
+                  x = ifelse(accum_pt < max(sim_vals$minutes) / 2, accum_pt + 0.1*max(sim_vals$minutes), accum_pt - 0.1*max(sim_vals$minutes)),
                   y = 0.8,
                   label = paste("Yield:", accumprod, "%")
                 ), 
