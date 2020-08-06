@@ -34,7 +34,7 @@ ui <- fluidPage(
                 h2("Reaction Module is Starting Up...", align = 'center', style = "font-size: 400%;"),
                 br(),br(),br(),
                 tags$div(
-                        tags$img(src = "IELogo2020.png", width = 600),
+                        tags$img(src = "IELogo2020.png", width = "45%"),
                         align = 'center'
                 )
         ),
@@ -267,8 +267,8 @@ server <- function(input, output, session) {
                                         isolate(
                                                 paste(
                                                         "Triglyceride Vol (mL) =",input$tg_initial,
-                                                        "g  --   Alcohol Vol (mL) =",input$alc_initial,
-                                                        "g  --   Sodium Hydroxide Mass (g) =",input$oh_initial,
+                                                        "mL  --   Alcohol Vol (mL) =",input$alc_initial,
+                                                        "mL  --   Sodium Hydroxide Mass (g) =",input$oh_initial,
                                                         "g  --   Reaction Temperature (ºC) =",input$temp_initial,"ºC"
                                                 )
                                         )
@@ -411,12 +411,6 @@ server <- function(input, output, session) {
                         max = slider_length
                 )
         })
-        
-        # gen rate slider update, updates the yield label on graph
-        # observeEvent(input$gen_rate_slider, ({
-        #         output$dispPlot <- renderPlot(isolate(progConcBar(sim_df(), sim_temp(), input$gen_rate_slider)))
-        # })
-        # )
 
         #### Generate All Graphs ####
         # generates graphs upon simulation trigger

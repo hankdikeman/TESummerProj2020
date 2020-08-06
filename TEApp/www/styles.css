@@ -30,7 +30,7 @@ body {
 
 /* add border to well panels, change color to gray */
 .well{
-  background: rgba(219,243,250,0.8);
+  background: rgba(219,243,250,0.7);
   border: 2px solid black;
 }
 
