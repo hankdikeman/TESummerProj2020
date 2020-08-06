@@ -104,7 +104,7 @@ ui <- fluidPage(
                         numericInput("t_length",
                                      NULL,
                                      min = 0,
-                                     value = 150),
+                                     value = 90),
                         tags$p("Please select the desired simulation precision (minutes)"),
                         # label above precision slider, showing effects on precision
                         fluidRow(column(6,
@@ -196,7 +196,7 @@ ui <- fluidPage(
                                                                                  "gen_rate_slider",
                                                                                  NULL,
                                                                                  min = 0,
-                                                                                 max = 150,
+                                                                                 max = 90,
                                                                                  value = 0,
                                                                                  width = "100%"
                                                                          )
@@ -214,7 +214,7 @@ ui <- fluidPage(
                                                                 "timept_select",
                                                                 NULL,
                                                                 min = 0,
-                                                                max = 150,
+                                                                max = 90,
                                                                 value = 0,
                                                                 width = "100%"
                                                         )
@@ -413,21 +413,21 @@ server <- function(input, output, session) {
         })
         
         # gen rate slider update, updates the yield label on graph
-        observeEvent(input$gen_rate_slider, ({
-                output$dispPlot <- renderPlot(isolate(progConcBar(sim_df(), sim_temp(), input$gen_rate_slider)))
-        })
-        )
+        # observeEvent(input$gen_rate_slider, ({
+        #         output$dispPlot <- renderPlot(isolate(progConcBar(sim_df(), sim_temp(), input$gen_rate_slider)))
+        # })
+        # )
 
         #### Generate All Graphs ####
         # generates graphs upon simulation trigger
         
         #### Selection of Displayed Plot ####
-        observeEvent(c(input$graph_select,input$disp_species), ({
+        observeEvent(c(input$graph_select,input$disp_species, input$gen_rate_slider), ({
                 output$dispPlot <- renderPlot({
                         switch(
                                 input$graph_select,
                                 "All Concentrations" = totalConcPlot(sim_df(), sim_temp(), IC_df(),input$species_sel),
-                                "Yield vs. Time" = progConcBar(sim_df(), sim_temp(), 0),
+                                "Yield vs. Time" = progConcBar(sim_df(), sim_temp(), input$gen_rate_slider),
                                 "Catalyst Activity" = CatActivity(sim_df())
                         )
                 }) 
