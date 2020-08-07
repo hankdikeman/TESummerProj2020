@@ -26,17 +26,17 @@ ui <- fluidPage(
         useShinyjs(),
         # boot up alert system
         useSweetAlert(),
-        setBackgroundImage(src = "RipplesBackground.png"),
+        setBackgroundImage(src = "DarkTurbineBackground.jpg"),
         # Loading message
         div(
                 id = "loading-content",
                 br(),br(),br(),
-                h2("Reaction Module is Starting Up...", align = 'center', style = "font-size: 400%;"),
-                br(),br(),br(),
                 tags$div(
                         tags$img(src = "IELogo2020.png", width = "45%"),
                         align = 'center'
-                )
+                ),
+                br(),br(),br(),
+                h2("Reaction Module is Starting Up...", align = 'center', style = "font-size: 400%;"),
         ),
         
         # Divider and hidden function for loading in app content
