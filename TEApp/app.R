@@ -335,7 +335,7 @@ server <- function(input, output, session) {
             colnames(sim_conc)[ncol(sim_conc)] <- "minutes"
             
             # warning message for failed simulation
-            failcondition <- (is.na(sim_conc[5,2]) || sim_conc[5,2] < 0 || sim_conc[5,2] > 1)
+            failcondition <- (anyNA.data.frame(sim_conc[2,]) || any(sim_conc[2,] < 0))
             if(failcondition){
                     sendSweetAlert(
                             session = session,
