@@ -1,23 +1,38 @@
-rel_Rates <- function(sim_vals, temp) {
+rel_Rates <- function(sim_vals, temp, accum_pt) {
   added_prod <-
     # Finds changes in concentration between timepoints and normalizes (essentially a crude derivative)
     transmute(sim_vals,
               minutes = minutes,
               prod_rate = ((lead(E) - (E))/(lead(S) - (S)))) %>%
-    filter(!(is.na(prod_rate))) %>%
-    mutate(prod_rate = prod_rate / max(abs(prod_rate)))
+    filter(!(is.na(prod_rate))) #%>%
+    #mutate(prod_rate = prod_rate / max(abs(prod_rate)))
+  
+  # find rate ratio at selected point
+  rate_ratio <- filter(added_prod, minutes >= accum_pt)$prod_rate[1]
+  # round ratio number
+  rate_ratio <- as.numeric(format(round(rate_ratio, 2), nsmall = 2))
+  
+  
   
   # Plot relative rates
   relRate <- ggplot(data = added_prod[, ]) +
     geom_area(
-      mapping = aes(x = minutes, y = (prod_rate), fill = "	#FFD700"),
+      mapping = aes(x = minutes, y = (prod_rate)),
       color = "black",
-      show.legend = FALSE
+      show.legend = FALSE,
+      fill="#86bbd8", 
+      alpha=0.4
     ) +
-    labs(title = "Relative Rates of Ester to Soap",
-         subtitle = paste("Temp = ", temp, "ºC")) +
+    geom_vline(xintercept = accum_pt, color = "black", size = 1.25) + 
+    geom_text(aes(
+      x = ifelse(accum_pt < max(sim_vals$minutes) / 2, accum_pt + 0.25*max(sim_vals$minutes), accum_pt - 0.25*max(sim_vals$minutes)),
+      y = 0.8*max(prod_rate),
+      label = paste(rate_ratio,":1 Ester:Soap Rates", sep = "")
+    ),
+    size = 6) +
+    labs(title = "Relative Rates of Soap to Ester Formation") +
     xlab("time (min)") +
-    ylab("Normalized Relative Rate")
+    ylab("Ratio of Ester:Soap Formation")
   
   
   return(relRate)

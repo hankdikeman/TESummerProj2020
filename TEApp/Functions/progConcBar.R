@@ -18,7 +18,8 @@ progConcBar <- function(sim_vals,temp,accum_pt) {
     geom_area(
       mapping = aes(x = minutes, y = prod_created, fill = posorneg),
       color = "black",
-      show.legend = FALSE
+      show.legend = FALSE,
+      alpha = 0.5
     ) +
     geom_vline(xintercept = accum_pt, color = "black", size = 1.25) + 
     geom_text(aes(

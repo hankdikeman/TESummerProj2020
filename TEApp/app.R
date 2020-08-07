@@ -461,7 +461,7 @@ server <- function(input, output, session) {
         )
         
         # hide loading screen, show rest of content
-        Sys.sleep(0.75)
+        Sys.sleep(1.25)
         hide(id = "loading-content", anim = TRUE, animType = "slide")    
         show("app-content")
 }
