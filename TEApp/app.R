@@ -240,9 +240,9 @@ ui <- fluidPage(
                                         plotOutput("yield_pie_plot"),
                                         tags$hr(),
                                         tags$h4("Download Raw Data From Reaction Simulation", align = 'center'),
-                                        br(),
                                         fluidRow(column(6,
                                                         tags$div(
+                                                                tags$p("Concentration Data (mol/L)"),
                                                                 downloadBttn("download_sim_conc",
                                                                              label = "Download Simulated Concentration Data As .csv Document",
                                                                              size = "xs"),
@@ -250,6 +250,7 @@ ui <- fluidPage(
                                                         )),
                                                  column(6,
                                                         tags$div(
+                                                                tags$p("Mass Composition Data (g)"),
                                                                 downloadBttn("download_sim_mass",
                                                                              label = "Download Simulated Weight Data As .csv Document",
                                                                              size = "xs"),

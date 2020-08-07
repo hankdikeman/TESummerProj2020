@@ -27,7 +27,7 @@ pieYield <- function(tp_df){
       axis.text = element_blank(),
       panel.grid  = element_blank()
     ) +
-    scale_fill_manual(values = c("#86BBD8","#F5B7B1","#D7DBDD"), name = "Fatty Acid Mole Percentage") +
+    scale_fill_manual(values = c("#86BBD8","#F5B7B1","#D7DBDD"), name = "Fatty Acid Distribution (mol%)") +
     labs(title = "Reaction Yield and Soap Formation Data",
          subtitle = paste("At time = ", time_value, "minutes")) 
 
