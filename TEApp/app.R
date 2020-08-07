@@ -152,7 +152,6 @@ ui <- fluidPage(
                                                 textOutput("blurb_explanation")
                                         )
                                 ),
-                                tags$hr(),
                                 wellPanel(
                                         # addition of concentration or other plot
                                         plotOutput("dispPlot") %>% withSpinner(color = "#000000")
@@ -234,7 +233,17 @@ ui <- fluidPage(
                                                         size = "xs"
                                                 ),
                                                 align = 'center'
+                                        ),
+                                        tags$br(),
+                                        tags$div(
+                                                downloadBttn(
+                                                        "download_sim_mass",
+                                                        label = "Download Simulated Weight Data As .csv Document",
+                                                        size = "xs"
+                                                ),
+                                                align = 'center'
                                         )
+                                        
                                         
                                 )
                         )
@@ -384,13 +393,22 @@ server <- function(input, output, session) {
             output$sim_tab <- renderDataTable(tab_df, option = list(dom = 't'))
         })
         
-        #gives option to download concentration data
+        #gives option to download concentration and mass data
         output$download_sim_conc <- downloadHandler(
                 filename = function() {
                         paste("conc_(M)-", gsub(" ","-",Sys.time()), ".csv", sep="")
                 },
                 content = function(file) {
                         write.csv(sim_df()*scl_fctr(), file)
+                }
+        )
+        
+        output$download_sim_mass <- downloadHandler(
+                filename = function() {
+                        paste("Wieght_(g)-", gsub(" ","-",Sys.time()), ".csv", sep="")
+                },
+                content = function(file) {
+                        write.csv(sim_df()*scl_fctr()*get_vol()*data.frame(matrix(c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), ncol = 8, nrow = 1)), file)
                 }
         )
         
