@@ -10,11 +10,10 @@ rel_Rates <- function(sim_vals, temp) {
   # Plot relative rates
   relRate <- ggplot(data = added_prod[, ]) +
     geom_area(
-      mapping = aes(x = minutes, y = (prod_rate), fill = "orange"),
+      mapping = aes(x = minutes, y = (prod_rate), fill = "	#FFD700"),
       color = "black",
       show.legend = FALSE
     ) +
-    scale_fill_manual(values = c("#00ff00", "#ff0000")) +
     labs(title = "Relative Rates of Ester to Soap",
          subtitle = paste("Temp = ", temp, "ºC")) +
     xlab("time (min)") +
