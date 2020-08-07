@@ -164,7 +164,7 @@ ui <- fluidPage(
                                                 selectInput(
                                                         "graph_select",
                                                         label = "Select the graph you would like to view",
-                                                        choices = c("All Concentrations", "Yield vs. Time", "Catalyst Activity")
+                                                        choices = c("All Concentrations", "Yield vs. Time", "Catalyst Activity", "Relative Rates of Ester:Soap")
                                                 )
                                         ),
                                         # selection of displayed species in concentration graph
@@ -200,6 +200,19 @@ ui <- fluidPage(
                                                                                  width = "100%"
                                                                          )
                                                                  )
+                                                ),
+                                                conditionalPanel(condition = "input.graph_select == 'Relative Rates of Ester:Soap'",
+                                                                 wellPanel(
+                                                                         tags$p("Select Accumulation Timepoint (minutes)", align = 'center'),
+                                                                         sliderInput(
+                                                                                 "rel_rates_slider",
+                                                                                 NULL,
+                                                                                 min = 0,
+                                                                                 max = 90,
+                                                                                 value = 0,
+                                                                                 width = "100%"
+                                                                         )
+                                                                 )
                                                 )
                                         )
                                 ),
@@ -226,23 +239,22 @@ ui <- fluidPage(
                                         hr(),
                                         plotOutput("yield_pie_plot"),
                                         tags$hr(),
-                                        tags$div(
-                                                downloadBttn(
-                                                        "download_sim_conc",
-                                                        label = "Download Simulated Concentration Data As .csv Document",
-                                                        size = "xs"
-                                                ),
-                                                align = 'center'
-                                        ),
-                                        tags$br(),
-                                        tags$div(
-                                                downloadBttn(
-                                                        "download_sim_mass",
-                                                        label = "Download Simulated Weight Data As .csv Document",
-                                                        size = "xs"
-                                                ),
-                                                align = 'center'
-                                        )
+                                        tags$h4("Download Raw Data From Reaction Simulation", align = 'center'),
+                                        br(),
+                                        fluidRow(column(6,
+                                                        tags$div(
+                                                                downloadBttn("download_sim_conc",
+                                                                             label = "Download Simulated Concentration Data As .csv Document",
+                                                                             size = "xs"),
+                                                                align = 'center'
+                                                        )),
+                                                 column(6,
+                                                        tags$div(
+                                                                downloadBttn("download_sim_mass",
+                                                                             label = "Download Simulated Weight Data As .csv Document",
+                                                                             size = "xs"),
+                                                                align = 'center'
+                                                        )))
                                         
                                         
                                 )
@@ -428,19 +440,27 @@ server <- function(input, output, session) {
                         min = 0,
                         max = slider_length
                 )
+                updateSliderInput(
+                        session,
+                        "rel_rates_slider",
+                        value = 0,
+                        min = 0,
+                        max = slider_length
+                )
         })
 
         #### Generate All Graphs ####
         # generates graphs upon simulation trigger
         
         #### Selection of Displayed Plot ####
-        observeEvent(c(input$graph_select,input$disp_species, input$gen_rate_slider), ({
+        observeEvent(c(input$graph_select,input$disp_species, input$gen_rate_slider, input$rel_rates_slider), ({
                 output$dispPlot <- renderPlot({
                         switch(
                                 input$graph_select,
                                 "All Concentrations" = totalConcPlot(sim_df(), sim_temp(), IC_df(),input$species_sel),
                                 "Yield vs. Time" = progConcBar(sim_df(), sim_temp(), input$gen_rate_slider),
-                                "Catalyst Activity" = CatActivity(sim_df())
+                                "Catalyst Activity" = CatActivity(sim_df()),
+                                "Relative Rates of Ester:Soap" = rel_Rates(sim_df(),sim_temp(),input$rel_rates_slider)
                         )
                 }) 
         }))

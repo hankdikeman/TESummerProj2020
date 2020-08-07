@@ -25,12 +25,12 @@ rel_Rates <- function(sim_vals, temp, accum_pt) {
     ) +
     geom_vline(xintercept = accum_pt, color = "black", size = 1.25) + 
     geom_text(aes(
-      x = ifelse(accum_pt < max(sim_vals$minutes) / 2, accum_pt + 0.25*max(sim_vals$minutes), accum_pt - 0.25*max(sim_vals$minutes)),
+      x = ifelse(accum_pt < max(sim_vals$minutes) / 2, accum_pt + 0.2*max(sim_vals$minutes), accum_pt - 0.2*max(sim_vals$minutes)),
       y = 0.8*max(prod_rate),
       label = paste(rate_ratio,":1 Ester:Soap Rates", sep = "")
     ),
     size = 6) +
-    labs(title = "Relative Rates of Soap to Ester Formation") +
+    labs(title = "Relative Rates of Reaction: Soap to Ester") +
     xlab("time (min)") +
     ylab("Ratio of Ester:Soap Formation")
   
