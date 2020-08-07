@@ -1,18 +1,16 @@
 rel_Rates <- function(sim_vals,temp) {
   added_prod <-
-    # The relative rates of the reaction Ester:Soap
+    # Finds changes in concentration between timepoints and normalizes (essentially a crude derivative)
     transmute(sim_vals,
               minutes = minutes,
-              prodE_created = (lead(E) - (E)),
-              prodS_created = (lead(S) - (S))) %>%
-    filter(!(is.na(prodE_created))) %>%
-    mutate(prodE_created = prodE_created / max(abs(prodE_created))) %>%
-    mutate(prodS_created = prodS_created / max(abs(prodS_created))) %>%
+              prod_rate = ((lead(E) - (E))/(lead(S) - (S)))) %>%
+    filter(!(is.na(prod_rate))) %>%
+    mutate(prod_rate = prod_rate / max(abs(prod_rate))) %>%
   
   # Plot relative rates
   relRate <- ggplot(data = added_prod[, ]) +
     geom_area(
-      mapping = aes(x = minutes, y = (prodE_created/prodS_created), fill = "orange"),
+      mapping = aes(x = minutes, y = (prod_rate), fill = "orange"),
       color = "black",
       show.legend = FALSE
     ) +
