@@ -87,7 +87,7 @@ ui <- fluidPage(
                         numericInput("oh_initial",
                                      NULL,
                                      min = 0,
-                                     value = 2),
+                                     value = 10),
                         tags$hr(),
                         # reaction temperature entry
                         tags$p("Reaction Temperature  (ºC)"),
@@ -118,7 +118,7 @@ ui <- fluidPage(
                                 "precision_sel",
                                 NULL,
                                 choices = c(0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10),
-                                selected = 5,
+                                selected = 2.5,
                                 grid = T
                         ), 
                         
@@ -357,8 +357,9 @@ server <- function(input, output, session) {
             colnames(sim_conc)[ncol(sim_conc)] <- "minutes"
             
             # warning message for failed simulation
-            failcondition <- (anyNA.data.frame(sim_conc[2,]) || any(sim_conc[2,] < 0))
+            failcondition <- (is.na(sim_conc[5,2]) || sim_conc[5,2] < 0 || sim_conc[5,2] > 1)
             if(failcondition){
+                    print(sim_conc[2,])
                     sendSweetAlert(
                             session = session,
                             title = "Warning!",
@@ -409,19 +410,31 @@ server <- function(input, output, session) {
         #gives option to download concentration and mass data
         output$download_sim_conc <- downloadHandler(
                 filename = function() {
-                        paste("conc_(M)-", gsub(" ","-",Sys.time()), ".csv", sep="")
+                        paste("conc_(M)-", gsub(" ","-",Sys.Date()), "_run_", input$go, ".csv", sep="")
                 },
                 content = function(file) {
-                        write.csv(sim_df()*scl_fctr(), file)
+                        # dimensionalize values
+                        conc_data <- sim_df()[,1:8]*scl_fctr()
+                        # add in time data
+                        conc_data <- cbind(conc_data, sim_df()[,9])
+                        colnames(conc_data)[9] <- "minutes"
+                        # write to csv file
+                        write.csv(conc_data, file)
                 }
         )
         
         output$download_sim_mass <- downloadHandler(
                 filename = function() {
-                        paste("Wieght_(g)-", gsub(" ","-",Sys.time()), ".csv", sep="")
+                        paste("mass_(g)-", gsub(" ","-",Sys.Date()), "_run_", input$go, ".csv", sep="")
                 },
                 content = function(file) {
-                        write.csv(sim_df()*scl_fctr()*get_vol()*data.frame(matrix(c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), ncol = 8, nrow = 1)), file)
+                        # convert to weight values
+                        wt_data <- sweep(sim_df()[,1:8]*scl_fctr()*get_vol(), MARGIN = 2, c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), '*')
+                        # add in time data
+                        wt_data <- cbind(wt_data, sim_df()[,9])
+                        colnames(wt_data)[9] <- "minutes"
+                        # write to csv file
+                        write.csv(wt_data, file)
                 }
         )
         
