@@ -164,7 +164,7 @@ ui <- fluidPage(
                                                 selectInput(
                                                         "graph_select",
                                                         label = "Select the graph you would like to view",
-                                                        choices = c("All Concentrations", "Yield vs. Time", "Catalyst Activity", "Relative Rates of Ester:Soap")
+                                                        choices = c("All Concentrations", "Yield vs. Time", "Catalyst Activity", "Relative Rates of Ester:Soap", "Emulisification Risk Assessment")
                                                 )
                                         ),
                                         # selection of displayed species in concentration graph
@@ -214,6 +214,7 @@ ui <- fluidPage(
                                                                          )
                                                                  )
                                                 )
+                                                
                                         )
                                 ),
                                 tags$hr(),
@@ -461,7 +462,8 @@ server <- function(input, output, session) {
                                 "All Concentrations" = totalConcPlot(sim_df(), sim_temp(), IC_df(),input$species_sel),
                                 "Yield vs. Time" = progConcBar(sim_df(), sim_temp(), input$gen_rate_slider),
                                 "Catalyst Activity" = CatActivity(sim_df()),
-                                "Relative Rates of Ester:Soap" = rel_Rates(sim_df(),sim_temp(),input$rel_rates_slider)
+                                "Relative Rates of Ester:Soap" = rel_Rates(sim_df(),sim_temp(),input$rel_rates_slider),
+                                "Emulisification Risk Assessment" = emulRisk(sim_df(), scl_fctr(), get_vol(), sim_temp())
                         )
                 }) 
         }))
