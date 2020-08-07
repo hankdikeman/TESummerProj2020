@@ -1,4 +1,4 @@
-emul_risk <- function(sim_vals,temp) {
+emul_risk <- function(scale_factor, vol, temp) {
   # Finds changes in concentration between timepoints and normalizes (essentially a crude derivative)
   added_prod <- transmute(sim_vals,
             minutes = minutes,

@@ -1,11 +1,11 @@
-rel_Rates <- function(sim_vals,temp) {
+rel_Rates <- function(sim_vals, temp) {
   added_prod <-
     # Finds changes in concentration between timepoints and normalizes (essentially a crude derivative)
     transmute(sim_vals,
               minutes = minutes,
               prod_rate = ((lead(E) - (E))/(lead(S) - (S)))) %>%
     filter(!(is.na(prod_rate))) %>%
-    mutate(prod_rate = prod_rate / max(abs(prod_rate))) %>%
+    mutate(prod_rate = prod_rate / max(abs(prod_rate)))
   
   # Plot relative rates
   relRate <- ggplot(data = added_prod[, ]) +
