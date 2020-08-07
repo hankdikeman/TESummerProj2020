@@ -255,9 +255,9 @@ server <- function(input, output, session) {
                                         isolate(
                                                 paste(
                                                         "Triglyceride Mass (g) =",input$tg_initial,
-                                                        "g   --   Alcohol Mass (g) =",input$alc_initial,
-                                                        "g   --   Sodium Hydroxide Mass (g) =",input$oh_initial,
-                                                        "g   --   Reaction Temperature (ºC) =",input$temp_initial,"ºC"
+                                                        "g  ||  Alcohol Mass (g) =",input$alc_initial,
+                                                        "g  ||  Sodium Hydroxide Mass (g) =",input$oh_initial,
+                                                        "g  ||  Reaction Temperature (ºC) =",input$temp_initial,"ºC"
                                                 )
                                         )
                                 )
@@ -267,9 +267,9 @@ server <- function(input, output, session) {
                                         isolate(
                                                 paste(
                                                         "Triglyceride Vol (mL) =",input$tg_initial,
-                                                        "mL  --   Alcohol Vol (mL) =",input$alc_initial,
-                                                        "mL  --   Sodium Hydroxide Mass (g) =",input$oh_initial,
-                                                        "g  --   Reaction Temperature (ºC) =",input$temp_initial,"ºC"
+                                                        "mL  ||  Alcohol Vol (mL) =",input$alc_initial,
+                                                        "mL  ||  Sodium Hydroxide Mass (g) =",input$oh_initial,
+                                                        "g  ||  Reaction Temperature (ºC) =",input$temp_initial,"ºC"
                                                 )
                                         )
                                 )
