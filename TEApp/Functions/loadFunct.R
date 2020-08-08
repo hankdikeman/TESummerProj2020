@@ -16,6 +16,7 @@ loadfunct <- function(){
   source("./Functions/pieYield.R")
   source("./Functions/CatActivity.R")
   source("./Functions/relativeRates.R")
+  source("./Functions/emulRisk.R")
   # Scale factor functions
   source("./Functions/scale_factor_wt.R")
   source("./Functions/scale_factor_vol.R")
