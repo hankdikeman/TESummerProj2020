@@ -30,7 +30,7 @@ ui <- fluidPage(
         # Loading message
         div(
                 id = "loading-content",
-                br(),br(),br(),
+                br(),br(),
                 tags$div(
                         tags$img(src = "IELogo2020.png", width = "45%"),
                         align = 'center'
@@ -164,7 +164,14 @@ ui <- fluidPage(
                                                 selectInput(
                                                         "graph_select",
                                                         label = "Select the graph you would like to view",
-                                                        choices = c("All Concentrations", "Yield vs. Time", "Catalyst Activity", "Relative Rates of Ester:Soap", "Emulisification Risk Assessment")
+                                                        choices = c(
+                                                                "All Concentrations",
+                                                                "Yield vs. Time",
+                                                                "Catalyst Activity",
+                                                                "Relative Rates of Ester:Soap",
+                                                                "Emulsification Risk Assessment",
+                                                                "Total Energy Released"
+                                                        )
                                                 )
                                         ),
                                         # selection of displayed species in concentration graph
@@ -476,7 +483,8 @@ server <- function(input, output, session) {
                                 "Yield vs. Time" = progConcBar(sim_df(), sim_temp(), input$gen_rate_slider),
                                 "Catalyst Activity" = CatActivity(sim_df()),
                                 "Relative Rates of Ester:Soap" = rel_Rates(sim_df(),sim_temp(),input$rel_rates_slider),
-                                "Emulisification Risk Assessment" = emulRisk(sim_df(), scl_fctr(), get_vol(), sim_temp())
+                                "Emulsification Risk Assessment" = emulRisk(sim_df(), scl_fctr(), get_vol(), sim_temp()),
+                                "Total Energy Released" = HeatGenLine(sim_df(), get_vol(), scl_fctr())
                         )
                 }) 
         }))

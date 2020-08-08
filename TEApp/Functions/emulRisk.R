@@ -1,23 +1,34 @@
 emulRisk <- function(sim_df, scale_factor, vol, temp) {
 
   # Compute initial mass of all reactants (overall mass will stay constant)
-  initial_mass <- sum(sim_df[1, 2:ncol(sim_df)]*scale_factor*vol*data.frame(matrix(c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), ncol = 8, nrow = 1)))
+  initial_mass <- sum(sim_df[1, 1:(ncol(sim_df)-1)]*scale_factor*vol*data.frame(matrix(c(300, 885.4, 665, 445, 32.04, 92.09, 250, 39.997), ncol = 8, nrow = 1)))
   
   # Create data frame with columns for time points and weight percents of soap 
   emul_df <- transmute(sim_df, minutes = minutes, S = (S*scale_factor*vol*250*100)/initial_mass)
+  
+  # add representative values so all risk categories on legend, parse out emulsion risk levels
+  emul_df[nrow(emul_df)+1,] <- c(-10,3)
+  emul_df[nrow(emul_df)+1,] <- c(-10,5)
+  emul_df <- mutate(emul_df, risk_cat = factor(ifelse(S < 1.5, "low risk", ifelse(S < 3.5, "mid risk","high risk")), levels = c("low risk", "mid risk", "high risk")))
 
   # Create plot of time vs weight percent of soap using ggplot
-  emulRisk <- ggplot(data = emul_df[, ]) +
-    geom_line(
-      mapping = aes(x = minutes, y = S),
+  emulRisk <- ggplot(data = emul_df, aes(x = minutes, y = S, fill = risk_cat)) +
+    geom_blank() +
+    geom_area(
       color = "black",
-      show.legend = FALSE
+      alpha = 0.4
     ) +
-  scale_fill_manual(values = c("#00ff00", "#ff0000")) +
-  labs(title = "Emulsification Risk Assessement",
-       subtitle = paste("Temp = ", temp, "ºC")) +
+    scale_fill_manual(
+      values = c("#00ff00", "#ffff00", "#ff0000"),
+      name = "Emulsion Risk",
+      labels = c("Low Risk", "Mid Risk", "High Risk"),
+      breaks = c("low risk", "mid risk", "high risk")
+    ) +
+    labs(title = "Estimation of Emulsification Risk For Subsequent Purification") + 
   xlab("time (min)") +
-  ylab("Weight % of Soap")
+  ylab("Soap Concentration (wt%)") +
+  ylim(0, max(c(8,max(emul_df$S)))) +
+  xlim(0, max(sim_df$minutes))
   
   return (emulRisk)
 }
