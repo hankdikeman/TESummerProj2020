@@ -1,0 +1,10 @@
+name: teapp
+title:
+username:
+account: ie-biofuels
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2651846
+bundleId: 3489726
+url: https://ie-biofuels.shinyapps.io/teapp/
+when: 1596862421.30568
