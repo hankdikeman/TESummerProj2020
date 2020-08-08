@@ -103,7 +103,7 @@ ui <- fluidPage(
                         tags$p("Total Time of Integration (minutes)"),
                         numericInput("t_length",
                                      NULL,
-                                     min = 0,
+                                     min = 10,
                                      value = 90),
                         tags$p("Please select the desired simulation precision (minutes)"),
                         # label above precision slider, showing effects on precision

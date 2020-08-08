@@ -18,13 +18,39 @@ emulRisk <- function(sim_df, scale_factor, vol, temp) {
       color = "black",
       alpha = 0.4
     ) +
+    # low risk line
+    geom_hline(yintercept = 1.5, color = "black", size = 1.25, linetype = "dashed") + 
+    # low risk label
+    geom_text(aes(
+      x = 0.1 * max(minutes),
+      y = 0.75,
+      label = paste("Low Risk")
+    ), 
+    size = 6) +
+    # mid risk line
+    geom_hline(yintercept = 3.5, color = "black", size = 1.25, linetype = "dashed") + 
+    # mid risk label
+    geom_text(aes(
+      x = 0.1 * max(minutes),
+      y = 2.5,
+      label = paste("Mid Risk")
+    ), 
+    size = 6) +
+    # mid risk label
+    geom_text(aes(
+      x = 0.1 * max(minutes),
+      y = 4.5,
+      label = paste("High Risk")
+    ), 
+    size = 6) +
     scale_fill_manual(
       values = c("#00ff00", "#ffff00", "#ff0000"),
       name = "Emulsion Risk",
       labels = c("Low Risk", "Mid Risk", "High Risk"),
       breaks = c("low risk", "mid risk", "high risk")
     ) +
-    labs(title = "Estimation of Emulsification Risk For Subsequent Purification") + 
+    labs(title = "Estimation of Emulsification Risk For Subsequent Purification",
+         subtitle = "Low < 1.5wt% || 1.5wt% < Mid < 3.5wt% || 3.5wt% < High") + 
   xlab("time (min)") +
   ylab("Soap Concentration (wt%)") +
   ylim(0, max(c(8,max(emul_df$S)))) +
