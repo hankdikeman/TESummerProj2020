@@ -1,21 +1,25 @@
 ## Enthalpies for ester estim. at -37 KJ/mol and soap and -20 KJ/mol
-calcThermo <- function(sim_vals, temp, vol, accum_pt, scale_factor){
+calcThermo <- function(sim_vals, temp, vol, accum_pt, accum_pt1, accum_pt2, scale_factor){
   constant <- scale_factor * vol * 100
   # Finds changes in concentration between timepoints and normalizes (essentially a crude derivative)
   added_heat <-
     transmute(sim_vals,
               minutes = minutes,
               heat = E * constant * (-37) + S * constant * (-20)) %>%
-    filter(!(is.na(heat))) #%>%
+  ##  filter(!(is.na(heat))) #%>%
   ##mutate(prod_created = heat / max(abs(heat))) %>%
     
   # calculate total accumulated product at given point
-  accum_heat <- filter(sim_vals, minutes >= accum_pt)
+  accum_heat <- filter(sim_vals, minutes >= accum_pt1)
+  #accum_heat1 <- filter(sim_vals, minutes >= accum_pt1)
+  #accum_heat2 <- filter(sim_vals, minutes >= accum_pt2)
   # round yield number
   accum_heat <- as.numeric(format(round(accumprod, 2), nsmall = 2))
+  #accum_heat1 <- as.numeric(format(round(accumprod, 2), nsmall = 2))
+  #accum_heat2 <- as.numeric(format(round(accumprod, 2), nsmall = 2))
+  #interval_heat <- (-1)*abs(accum_heat2-accum_heat1)
   
-  
-  # Plot rate of change graph
+  # Plot enthalpy graph
   heat_rate <- ggplot(data = added_heat[, ]) +
     geom_area(
       mapping = aes(x = minutes, y = heat, fill = "green"),
