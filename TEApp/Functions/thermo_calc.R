@@ -1,11 +1,11 @@
 ## Enthalpies for ester estim. at -37 KJ/mol and soap and -20 KJ/mol
 calcThermo <- function(sim_vals, temp, vol, accum_pt, accum_pt1, accum_pt2, scale_factor){
-  constant <- scale_factor * vol * 100
+  constant <- as.numeric(scale_factor * vol * 100)
   # Finds changes in concentration between timepoints and normalizes (essentially a crude derivative)
   added_heat <-
     transmute(sim_vals,
               minutes = minutes,
-              heat = E * constant * (-37) + S * constant * (-20)) %>%
+              heat = E * constant * (37) + S * constant * (20)) %>%
   ##  filter(!(is.na(heat))) #%>%
   ##mutate(prod_created = heat / max(abs(heat))) %>%
     
