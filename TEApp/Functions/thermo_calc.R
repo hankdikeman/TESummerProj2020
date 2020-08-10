@@ -5,7 +5,7 @@ calcThermo <- function(sim_vals, temp, vol, accum_pt, accum_pt1, accum_pt2, scal
   added_heat <-
     transmute(sim_vals,
               minutes = minutes,
-              heat = E * constant * (37) + S * constant * (20)) %>%
+              heat = E * constant * (10) + S * constant * (45)) %>%
   ##  filter(!(is.na(heat))) #%>%
   ##mutate(prod_created = heat / max(abs(heat))) %>%
     
