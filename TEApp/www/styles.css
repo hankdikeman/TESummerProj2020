@@ -95,6 +95,14 @@ img {
   background: #000000;
 }
 
+.table {
+  border: 1px solid black;
+}
+
+#tablespot td {border: 1px solid #000000;text-align:center}
+
+#tablespot th, td {border: 1px solid #000000;text-align:center}
+
 /* change color of background for selected number to bluish*/
 .irs-from, .irs-to, .irs-single {
   background: #86bbd8;

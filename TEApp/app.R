@@ -243,7 +243,10 @@ ui <- fluidPage(
                                         tags$hr(),
                                         # table displaying species concentrations and title of table
                                         tags$div(textOutput("table_label"), align = 'center'),
-                                        dataTableOutput("sim_tab"),
+                                        br(),
+                                        tags$div(id = "tablespot",
+                                                tableOutput("sim_tab"),
+                                                 align = 'center'), 
                                         hr(),
                                         plotOutput("yield_pie_plot"),
                                         tags$hr(),
@@ -409,10 +412,10 @@ server <- function(input, output, session) {
             
             # sets column and row names for data table
             rownames(tab_df) <- c("Concentration (mol/L)", "Total Mass (grams)")
-            colnames(tab_df) <- c("Ester", "TriG", "DiG", "MonoG", "Alcohol", "Glycerol", "Soap", "Hydroxide")
+            colnames(tab_df) <- c("Ester", "TriG", "DiG", "MonoG", "Alcohol", "Glycerol", "Soap", "NaOH")
 
             # render timepoint data table
-            output$sim_tab <- renderDataTable(tab_df, option = list(dom = 't'))
+            output$sim_tab <- renderTable(tab_df,  rownames = TRUE, hover = TRUE, bordered = TRUE, width = "100%")
         })
         
         #gives option to download concentration and mass data
