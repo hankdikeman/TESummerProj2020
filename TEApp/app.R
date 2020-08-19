@@ -105,6 +105,7 @@ ui <- fluidPage(
                                      NULL,
                                      min = 10,
                                      value = 90),
+                        tags$hr(),
                         tags$p("Please select the desired simulation precision (minutes)"),
                         # label above precision slider, showing effects on precision
                         fluidRow(column(6,
