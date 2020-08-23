@@ -1,7 +1,7 @@
 HeatGenLine <- function(sim_vals, vol, scale_factor){
   # these should be the heats of formation PER FATTY ACID in kJ/mol. Must be also put manually onto graph
-  delH_TE <- 37
-  delH_SAP <- 211
+  delH_TE <- 10.742
+  delH_SAP <- 110.7
   
   # calculation of released energy by reaction
   E_released <- transmute(sim_vals, minutes = minutes, E_tot = scale_factor*vol*(E*delH_TE + S*delH_SAP), typerxn = "total")
@@ -18,11 +18,11 @@ HeatGenLine <- function(sim_vals, vol, scale_factor){
          subtitle = expression(paste(
            paste(Delta, "H", sep = "")[TE],
            " = ",
-           37,
+           -10.74,
            " kJ/mol,  ",
            paste(Delta, "H", sep = "")[SAP],
            " = ",
-           211,
+           -110.7,
            " kJ/mol"
          ))) +
     scale_color_manual(
