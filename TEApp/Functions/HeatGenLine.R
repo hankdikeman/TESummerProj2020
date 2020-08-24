@@ -14,7 +14,7 @@ HeatGenLine <- function(sim_vals, vol, scale_factor){
   # plotting on line plot
   E_plot <- ggplot(data = E_rel_total, aes(x = minutes, y = E_tot, color = typerxn)) + 
     geom_line(size = 1.25) +
-    labs(title = "Total Reaction Energy Production by Time (kJ)",
+    labs(title = "Heat Released Through Time",
          subtitle = expression(paste(
            paste(Delta, "H", sep = "")[TE],
            " = ",

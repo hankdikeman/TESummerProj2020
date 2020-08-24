@@ -198,7 +198,7 @@ ui <- fluidPage(
                                                 ),
                                                 conditionalPanel(condition = "input.graph_select == 'Yield vs. Time'",
                                                                  wellPanel(
-                                                                         tags$p("Select Accumulation Timepoint (minutes)", align = 'center'),
+                                                                         tags$p("Select Reaction Timepoint (minutes)", align = 'center'),
                                                                          sliderInput(
                                                                                  "gen_rate_slider",
                                                                                  NULL,
@@ -211,7 +211,7 @@ ui <- fluidPage(
                                                 ),
                                                 conditionalPanel(condition = "input.graph_select == 'Relative Rates of Ester:Soap'",
                                                                  wellPanel(
-                                                                         tags$p("Select Accumulation Timepoint (minutes)", align = 'center'),
+                                                                         tags$p("Select Reaction Timepoint (minutes)", align = 'center'),
                                                                          sliderInput(
                                                                                  "rel_rates_slider",
                                                                                  NULL,
