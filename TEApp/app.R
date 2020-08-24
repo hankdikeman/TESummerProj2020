@@ -100,7 +100,7 @@ ui <- fluidPage(
                         ),
                         tags$hr(),
                         # length of integration
-                        tags$p("Total Time of Integration (minutes)"),
+                        tags$p("Simulated Reaction Length (minutes)"),
                         numericInput("t_length",
                                      NULL,
                                      min = 10,
