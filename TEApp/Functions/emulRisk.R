@@ -49,7 +49,7 @@ emulRisk <- function(sim_df, scale_factor, vol, temp) {
       labels = c("Low Risk", "Mid Risk", "High Risk"),
       breaks = c("low risk", "mid risk", "high risk")
     ) +
-    labs(title = "Estimation of Emulsification Risk For Subsequent Purification",
+    labs(title = "Emulsion Risk",
          subtitle = "Low < 1.5wt% || 1.5wt% < Mid < 3.5wt% || 3.5wt% < High") + 
   xlab("time (min)") +
   ylab("Soap Concentration (wt%)") +

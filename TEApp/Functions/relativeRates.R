@@ -30,7 +30,7 @@ rel_Rates <- function(sim_vals, temp, accum_pt) {
       label = paste(rate_ratio,":1 Ester:Soap Rates", sep = "")
     ),
     size = 6) +
-    labs(title = expression(paste("Relative Rates of Generation, Ester Formation Rate:Soap Formation Rate"))) +
+    labs(title = expression(paste("Ester:Soap Formation Rate"))) +
     xlab("time (min)") +
     ylab(expression(paste("Relative Rates of Rxn (", scriptstyle(frac("Transesterification","Saponification")),")")))
   

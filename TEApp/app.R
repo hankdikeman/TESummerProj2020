@@ -109,7 +109,7 @@ ui <- fluidPage(
                         ),
                         tags$hr(),
                         # length of integration
-                        tags$p("Total Time of Integration (minutes)"),
+                        tags$p("Simulated Reaction Length (minutes)"),
                         numericInput("t_length",
                                      NULL,
                                      min = 10,
@@ -214,7 +214,7 @@ ui <- fluidPage(
                                                 ),
                                                 conditionalPanel(condition = "input.graph_select == 'Yield vs. Time'",
                                                                  wellPanel(
-                                                                         tags$p("Select Accumulation Timepoint (minutes)", align = 'center'),
+                                                                         tags$p("Select Reaction Timepoint (minutes)", align = 'center'),
                                                                          sliderInput(
                                                                                  "gen_rate_slider",
                                                                                  NULL,
@@ -227,7 +227,7 @@ ui <- fluidPage(
                                                 ),
                                                 conditionalPanel(condition = "input.graph_select == 'Relative Rates of Ester:Soap'",
                                                                  wellPanel(
-                                                                         tags$p("Select Accumulation Timepoint (minutes)", align = 'center'),
+                                                                         tags$p("Select Reaction Timepoint (minutes)", align = 'center'),
                                                                          sliderInput(
                                                                                  "rel_rates_slider",
                                                                                  NULL,

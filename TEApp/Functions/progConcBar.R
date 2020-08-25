@@ -32,7 +32,7 @@ progConcBar <- function(sim_vals,temp,accum_pt) {
     labs(title = "Product Yield and Production Rate vs. Time",
          subtitle = paste("Temp = ", temp, "ºC")) +
     xlab("time (min)") +
-    ylab("Normalized Rate")
+    ylab("Normalized Ester Production Rate")
 
   return(progConc)
 }
