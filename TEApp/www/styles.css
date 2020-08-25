@@ -85,6 +85,10 @@ img {
   background: #86bbd8; 
 }
 
+#upperinfopage {
+  z-index: 1000000;
+}
+
 /* set black color for text under slider */
 .irs-grid-text {
   color: #000000;

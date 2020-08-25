@@ -62,6 +62,15 @@ ui <- fluidPage(
                         tags$h2(tags$strong("Initial Conditions Entry"), align = 'center'),
                         # short blurb explanation
                         tags$p("Please enter your initial reactant amounts, temperatures, and desired length of simulation below:", align = 'center'),
+                        div(
+                        checkboxInput(
+                                inputId = "dispinfo",
+                                label = "Display webpage info document",
+                                value = FALSE,
+                                width = '100%'
+                        ),
+                        style = "text-align: center;"
+                        ),
                         tags$hr(),
                         # selection of mass or volume input
                         radioGroupButtons(
@@ -139,6 +148,13 @@ ui <- fluidPage(
                 #### Main Results Panel ####
                 # Show a plot of the generated distribution
                 mainPanel(
+                        hidden(div(
+                                id = "infopageviewer",
+                                tags$iframe(style="height:600px; width:100%;", src="InfoPageFinal.pdf"),
+                                br(),
+                                br(),
+                                style = "align: center;"
+                        )),
                         conditionalPanel(
                                 # only shows results stuff once go button has been clicked
                                 condition = "input.go != 0",
@@ -491,6 +507,16 @@ server <- function(input, output, session) {
                                 "Total Energy Released" = HeatGenLine(sim_df(), get_vol(), scl_fctr())
                         )
                 }) 
+        }))
+        
+        #show or hide info page
+        observeEvent(input$dispinfo, ({
+                if(input$dispinfo){
+                        show("infopageviewer")
+                }
+                else(
+                        hide("infopageviewer")
+                )
         }))
         
         # update labels on input functions for mass/volume addition
